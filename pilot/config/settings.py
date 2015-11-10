@@ -1,5 +1,6 @@
 import os
 from .secrets import *
+from .pipelines import *
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -19,6 +20,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'pipeline',
     'apps.accounts',
     'apps.visualizations',
     'apps.dashboards',
@@ -33,6 +35,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'pipeline.middleware.MinifyHTMLMiddleware',
 )
 
 ROOT_URLCONF = 'urls.root'
@@ -75,6 +78,17 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'accounts.User'
 
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_DIRS = ( os.path.join(BASE_DIR, 'assets/dev'), )
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
+)
+
+STATIC_URL = '/assets/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'assets/pipeline')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -89,8 +103,4 @@ USE_L10N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.8/howto/static-files/
-
-STATIC_URL = '/static/'
+APPEND_SLASH = True

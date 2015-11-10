@@ -14,6 +14,15 @@ def create(request):
     visualization = Visualization(name=request.POST.get('name'),
                                   description=request.POST.get('description'),
                                   account=request.user.account)
+    if request.POST.get('cache_for'):
+        visualization.cache_for = int(request.POST.get('cache_for'))
+        visualization.cache_until = None
+    elif request.POST.get('cache_until'):
+        visualization.cache_for = None
+        visualization.cache_until = request.POST.get('cache_until')
+    else:
+        visualization.cache_for = None
+        visualization.cache_until = None
     visualization.save()
     return redirect(query, visualization_id=visualization.id)
 
@@ -33,6 +42,15 @@ def update(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
     visualization.name = request.POST.get('name')
     visualization.description = request.POST.get('description')
+    if request.POST.get('cache_for'):
+        visualization.cache_for = int(request.POST.get('cache_for'))
+        visualization.cache_until = None
+    elif request.POST.get('cache_until'):
+        visualization.cache_for = None
+        visualization.cache_until = request.POST.get('cache_until')
+    else:
+        visualization.cache_for = None
+        visualization.cache_until = None
     visualization.save()
     return redirect(show, visualization_id=visualization.id)
 
@@ -81,7 +99,7 @@ def execute(request, visualization_id):
     err, job = visualization.execute()
     if err:
         return HttpResponse(err, 'application/json', status=404)
-    return HttpResponse(json.dumps(dict(url=job.get_results_url())), 'application/json')
+    return HttpResponse(json.dumps(dict(url=job.cache_url)), 'application/json')
 
 def remove(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)

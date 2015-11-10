@@ -4,3 +4,4 @@ django_extensions
 google-api-python-client
 oauth2client
 boto
+pipeline
