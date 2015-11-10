@@ -1,0 +1,6 @@
+<form action="{% url 'accounts_bigquery_choose_project_post' %}" method="post">
+    {% csrf_token %}
+    {% for project in projects %}
+    <button type="submit" name="project_id" value="{{ project.id }}">{{ project.id }}</button>
+    {% endfor %}
+</form>

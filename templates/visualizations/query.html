@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
+    <li><a href="{% url 'visualizations_show' visualization.id %}">{{ visualization.name }}</a></li>
+    <li class="active">Query</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+<div class="well">
+    <h2>Query</h2>
+    <form class="form-horizontal" action="{% url 'visualizations_query_update' visualization.id %}" method="post" id="visualizationsQueryForm">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="inputScript" class="col-sm-2 control-label">Script</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="inputScript" name="script" rows="20" required>{{ visualization.query.script|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn btn-default" id="preview">Preview</button>
+                <button type="submit" class="btn btn-default">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="well hidden" id="table">
+    <h2>Table</h2>
+    <div id="table_div"></div>
+</div>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script>
+google.load('visualization', '1.1', {'packages':['table']});
+$('#preview').click(function(event){
+    $('#table').removeClass('hidden');
+    event.preventDefault();
+    $.ajax({
+        url: $('#visualizationsQueryForm').attr('action'),
+        data: $('#visualizationsQueryForm').serialize(),
+        success: function(data){
+            $.ajax({
+                url: data.url,
+                success: function(data){
+                    var dataTable = new google.visualization.DataTable();
+                    data.schema.forEach(function(col){
+                        var type = col.type;
+                        var newType;
+                        if (type == 'INTEGER' || type == 'FLOAT') newType = 'number';
+                        else if (type == 'STRING') newType = 'string';
+                        else if (type == 'BOOLEAN') newType = 'boolean';
+                        else if (type == 'DATE') newType = 'date';
+                        dataTable.addColumn(newType, col.name);
+                    });
+                    console.log(data.rows);
+                    dataTable.addRows(data.rows);
+                    var options = {
+                        title:'How Much Pizza I Ate Last Night',
+                        width: '100%',
+                        height: '100%'
+                    };
+                    new google.visualization.Table(document.getElementById('table_div')).draw(dataTable, options);
+                }
+            });
+        },
+        error: function(err){
+            $('#table_div').html(err.responseJSON.error.message);
+        },
+        type: 'post'
+    });
+});
+</script>
+{% endblock javascripts %}

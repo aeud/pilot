@@ -1,0 +1,5 @@
+{% if request.user.account.bq_project %}
+{{ request.user.account.bq_project.project_id }} (<a href="{% url 'accounts_bigquery_remove_project' %}">delete</a>)
+{% else %}
+<a href="{% url 'accounts_bigquery_connect' %}">BQ</a>
+{% endif %}

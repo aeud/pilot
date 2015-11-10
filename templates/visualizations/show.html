@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
+    <li class="active">{{ visualization.name }}</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="well">
+            <h2>{{ visualization.name }}</h2>
+            {{ visualization.description }}
+            <a href="{% url 'visualizations_edit' visualization.id %}">edit</a>
+        </div>
+        <div class="well">
+            <h2>Query</h2>
+            <pre>{{ visualization.query.script|linebreaks }}</pre>
+            <a href="{% url 'visualizations_query' visualization.id %}">edit</a>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <h2>Graph</h2>
+            <div id="visualization_div"></div>
+            <a href="{% url 'visualizations_graph' visualization.id %}">edit</a>
+        </div>
+        <div class="well">
+            <h2>Table</h2>
+            <div id="table_div"></div>
+        </div>
+    </div>
+</div>
+<a href="{% url 'visualizations_remove' visualization.id %}">remove</a>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script type='text/javascript'>
+google.load('visualization', '1');
+function buildDataTable(s3URL, callback){
+    $.ajax({
+        url: s3URL,
+        success: function(data){
+            var dataTable = new google.visualization.DataTable();
+            data.schema.forEach(function(col){
+                var type = col.type;
+                var newType;
+                if (type == 'INTEGER' || type == 'FLOAT') newType = 'number';
+                else if (type == 'STRING') newType = 'string';
+                else if (type == 'BOOLEAN') newType = 'boolean';
+                else if (type == 'DATE') newType = 'date';
+                dataTable.addColumn(newType, col.name);
+            });
+            dataTable.addRows(data.rows);
+            callback(dataTable);
+        }
+    });
+}
+function drawVisualization() {
+    $.ajax({
+        url: '{% url 'visualizations_execute' visualization.id %}',
+        success: function(data){
+            buildDataTable(data.url, function(dataTable){
+                google.visualization.drawChart({
+                    containerId: 'visualization_div',
+                    dataTable: dataTable,
+                    chartType: '{{ visualization.graph.chart_type }}',
+                    options: {
+                        height: 400
+                    }
+                });
+                google.visualization.drawChart({
+                    containerId: 'table_div',
+                    dataTable: dataTable,
+                    chartType: 'Table',
+                    options: {
+                        height: 400
+                    }
+                });
+            });
+        }
+    });
+}
+google.setOnLoadCallback(drawVisualization);
+</script>
+{% endblock javascripts %}

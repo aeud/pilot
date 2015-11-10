@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
+    <li><a href="{% url 'visualizations_show' visualization.id %}">{{ visualization.name }}</a></li>
+    <li><a href="{% url 'visualizations_query' visualization.id %}">Query</a></li>
+    <li class="active">Graph</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+<div class="well">
+    <div id="table_div" style="width: 500px; height: 500px"></div>
+</div>
+<div class="well">
+    <h2>New query</h2>
+    <form class="form-horizontal" action="{% url 'visualizations_graph_update' visualization.id %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="inputType" class="col-sm-2 control-label">Type</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="inputType" name="chart_type">
+                    <option value="Table" {% if visualization.graph.chart_type == 'Table' %}selected{% endif %}>Table</option>
+                    <option value="LineChart" {% if visualization.graph.chart_type == 'LineChart' %}selected{% endif %}>LineChart</option>
+                    <option value="PieChart" {% if visualization.graph.chart_type == 'PieChart' %}selected{% endif %}>PieChart</option>
+                    <option value="BarChart" {% if visualization.graph.chart_type == 'BarChart' %}selected{% endif %}>BarChart</option>
+                    <option value="ColumnChart" {% if visualization.graph.chart_type == 'ColumnChart' %}selected{% endif %}>ColumnChart</option>
+                    <option value="TreeMap" {% if visualization.graph.chart_type == 'TreeMap' %}selected{% endif %}>TreeMap</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputOptions" class="col-sm-2 control-label">Options</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="inputOptions" name="options">{{ visualization.graph.options }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Save</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script type="text/javascript">
+    function buildDataTable(s3URL, callback){
+        $.ajax({
+            url: s3URL,
+            success: function(data){
+                var dataTable = new google.visualization.DataTable();
+                data.schema.forEach(function(col){
+                    var type = col.type;
+                    var newType;
+                    if (type == 'INTEGER' || type == 'FLOAT') newType = 'number';
+                    else if (type == 'STRING') newType = 'string';
+                    else if (type == 'BOOLEAN') newType = 'boolean';
+                    else if (type == 'DATE') newType = 'date';
+                    dataTable.addColumn(newType, col.name);
+                });
+                dataTable.addRows(data.rows);
+                callback(dataTable);
+            }
+        });
+    }
+    var url;
+    google.load('visualization', '1.1', {'packages':['table']});
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        $.ajax({
+            url: '{% url 'visualizations_execute' visualization.id %}',
+            success: function(data){
+                console.log(data);
+                url = data.url;
+                buildDataTable(url, function(dataTable){
+                    var options = {
+                        title:'How Much Pizza I Ate Last Night',
+                        width: '100%',
+                        height: '100%'
+                    };
+                    new google.visualization.Table(document.getElementById('table_div')).draw(dataTable, options);
+                });
+            },
+            error: function(err){
+                $('#table_div').html(err.responseJSON.error.message);
+            }
+        });
+    }
+</script>
+{% endblock javascripts %}

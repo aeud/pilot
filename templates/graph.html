@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1.1', {'packages':['table']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        $.ajax({
+            url: '{% url 'graph_red' %}',
+            success: function(data){
+                console.log(data);
+                var dataTable = new google.visualization.DataTable();
+                data.schema.forEach(function(col){
+                    var type = col.type;
+                    var newType;
+                    if (type == 'INTEGER' || type == 'FLOAT') newType = 'number';
+                    else if (type == 'STRING') newType = 'string';
+                    else if (type == 'BOOLEAN') newType = 'boolean';
+                    else if (type == 'DATE') newType = 'date';
+                    dataTable.addColumn(newType, col.name);
+                });
+                console.log(data.rows);
+                dataTable.addRows(data.rows);
+                var options = {
+                    title:'How Much Pizza I Ate Last Night',
+                    width: '100%'
+                };
+                new google.visualization.Table(document.getElementById('table_div')).draw(dataTable, options);
+            }
+        });
+        
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="table_div" style="width: 500px; height: 500px"></div>
+  </body>
+</html>
