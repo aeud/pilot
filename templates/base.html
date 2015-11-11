@@ -26,7 +26,9 @@
             <div class="col-lg-2 hidden-md hidden-sm hidden-xs" id="col-nav">{% include "_layout/_nav.html" %}</div>
             <div class="col-lg-offset-2 col-lg-10" id="main-container">
                 <header id="header">
+                    {% block header %}
                     <h1>{% block h1 %}{% endblock h1 %}</h1>
+                    {% endblock header %}
                 </header>
                 <div id="nonHeader">
                     {% block breadcrumbs %}

@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% block title %}Query visualization • {{ visualization.name }}{% endblock title %}
+{% block h1 %}{{ visualization.name }} > Query{% endblock h1 %}
+
 {% block breadcrumbs_nav %}
 <ol class="breadcrumb">
     <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
@@ -13,6 +16,7 @@
     <h2>Query</h2>
     <form class="form-horizontal" action="{% url 'visualizations_query_update' visualization.id %}" method="post" id="visualizationsQueryForm">
         {% csrf_token %}
+        {% if dashboard %}<input class="hidden" name="dashboard" value="{{ dashboard.id }}">{% endif %}
         <div class="form-group">
             <label for="inputScript" class="col-sm-2 control-label">Script</label>
             <div class="col-sm-10">

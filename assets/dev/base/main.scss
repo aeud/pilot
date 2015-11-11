@@ -364,6 +364,30 @@ footer .fa {
     box-shadow: $shadow3;
 }
 
+.btn-control {
+    background: none;
+    border: none;
+}
+.btn-control:hover,
+.btn-control.active.focus,
+.btn-control.active:focus,
+.btn-control.active:hover,
+.btn-control:active.focus,
+.btn-control:active:focus,
+.btn-control:active:hover,
+.btn-control.active,
+.btn-control:active,
+.open>.dropdown-toggle.btn-control.focus,
+.open>.dropdown-toggle.btn-control:focus,
+.open>.dropdown-toggle.btn-control:hover,
+.open>.dropdown-toggle.btn-control {
+    background: none;
+    border: none;
+}
+.btn-group.open .dropdown-toggle {
+    box-shadow: none;
+}
+
 input[type=text],
 input[type=password],
 input[type=email],
@@ -528,6 +552,9 @@ a.edit-right-button:hover {
     font-weight: 200;
     padding: 0 30px;
 }
+#breadcrumbs {
+    background-color: #f5f5f5;
+}
 ol.breadcrumb {
     margin-bottom: 0;
     overflow: scroll;
@@ -656,6 +683,9 @@ div.row.back {
 .btn-group.open .dropdown-toggle.btn-blank {
     box-shadow: none;
 }
+.menu dl {
+    margin-bottom: 0;
+}
 .menu > dl > dt {
     border-left: 2px solid transparent;
     color: #333;
@@ -708,4 +738,17 @@ div.row.back {
 }
 .textarea-courier {
     font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace;
+}
+
+nav.menu dl dt .material-icons {
+    font-size: 20px;
+    margin-right: 10px;
+    position: relative;
+    top: 5px;
+}
+
+.control {
+    height: 100%;
+    margin: 6px 10px;
+    font-size: 18px;
 }

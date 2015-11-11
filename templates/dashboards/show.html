@@ -1,4 +1,29 @@
 {% extends "base.html" %}
+
+{% block title %}Dashboard {{ dashboard.name }}{% endblock title %}
+{% block h1 %}{{ dashboard.name }}{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'dashboards_index' %}">Dashboards</a></li>
+    <li class="active">{{ dashboard.name }}</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
 {% block container %}
-coucou
+<h2>Visualizations</h2>
+<div class="row">
+    {% for dashboard_entity in dashboard_entities %}
+    <div class="col-md-3">
+        <a class="well" href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">
+            {{ dashboard_entity.visualization.name }}
+        </a>
+    </div>
+    {% endfor %}
+    <div class="col-md-3">
+        <a class="well" href="{% url 'dashboards_visualizations_new' dashboard.id %}">
+            New visualization
+        </a>
+    </div>
+</div>
 {% endblock container %}

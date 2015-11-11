@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse
 from apps.visualizations.models import Query, Visualization, Job, Graph
+from apps.dashboards.models import Dashboard
 import json
 
 def index(request):
@@ -32,7 +33,8 @@ def show(request, visualization_id):
         return redirect(query, visualization_id=visualization.id)
     if not visualization.graph:
         return redirect(graph, visualization_id=visualization.id)
-    return render(request, 'visualizations/show.html', dict(visualization=visualization))
+    relative_dashboards = Dashboard.objects.filter(dashboardentity__visualization=visualization)
+    return render(request, 'visualizations/show.html', dict(visualization=visualization, relative_dashboards=relative_dashboards))
 
 def edit(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
@@ -56,6 +58,9 @@ def update(request, visualization_id):
 
 def query(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    if request.GET.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.GET.get('dashboard'), account=request.user.account)
+        return render(request, 'visualizations/query.html', dict(visualization=visualization, dashboard=dashboard))
     return render(request, 'visualizations/query.html', dict(visualization=visualization))
 
 def query_update(request, visualization_id):
@@ -72,10 +77,16 @@ def query_update(request, visualization_id):
         visualization.save()
     if request.is_ajax():
         return redirect(execute, visualization_id=visualization.id)
+    if request.POST.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.POST.get('dashboard'), account=request.user.account)
+        return redirect('dashboards_play', dashboard_slug=dashboard.slug)
     return redirect(graph, visualization_id=visualization.id)
 
 def graph(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    if request.GET.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.GET.get('dashboard'), account=request.user.account)
+        return render(request, 'visualizations/graph.html', dict(visualization=visualization, dashboard=dashboard))
     return render(request, 'visualizations/graph.html', dict(visualization=visualization))
 
 def graph_update(request, visualization_id):
@@ -84,14 +95,19 @@ def graph_update(request, visualization_id):
         graph = visualization.graph
         graph.options = request.POST.get('options')
         graph.chart_type = request.POST.get('chart_type')
+        graph.map_script = request.POST.get('map_script')
         graph.save()
     else:
         graph = Graph()
         graph.options = request.POST.get('options')
         graph.chart_type = request.POST.get('chart_type')
+        graph.map_script = request.POST.get('map_script')
         graph.save()
         visualization.graph = graph
         visualization.save()
+    if request.POST.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.POST.get('dashboard'), account=request.user.account)
+        return redirect('dashboards_play', dashboard_slug=dashboard.slug)
     return redirect(show, visualization_id=visualization.id)
 
 def execute(request, visualization_id):
@@ -106,3 +122,27 @@ def remove(request, visualization_id):
     visualization.is_active = False
     visualization.save()
     return redirect(index)
+
+def duplicate(request, visualization_id):
+    visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    new_visualization = Visualization(name='Copy of ' + visualization.name,
+                                      description=visualization.description,
+                                      account=visualization.account,
+                                      cache_for=visualization.cache_for,
+                                      cache_until=visualization.cache_until)
+    if visualization.query:
+        new_query = Query(script=visualization.query.script)
+        new_query.save()
+        new_visualization.query = new_query
+
+    if visualization.graph:
+        new_graph = Graph(options=visualization.graph.options,
+                          chart_type=visualization.graph.chart_type,
+                          map_script=visualization.graph.map_script)
+        new_graph.save()
+        new_visualization.graph = new_graph
+    new_visualization.save()
+    return redirect(edit, visualization_id=new_visualization.id)
+
+
+

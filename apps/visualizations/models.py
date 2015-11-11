@@ -25,6 +25,7 @@ class Query(models.Model):
 class Graph(models.Model):
     options       = models.TextField()
     chart_type    = models.CharField(max_length=255)
+    map_script    = models.TextField(null=True)
 
 class Visualization(models.Model):
     is_active    = models.BooleanField(default=True)
@@ -76,7 +77,19 @@ class Visualization(models.Model):
                     elif column_type == 'FLOAT':
                         return dict(v=float(value))
                     return dict(v=value)
+                def change_type(t):
+                    if t == 'INTEGER' or t == 'FLOAT':
+                        return 'number'
+                    elif t == 'STRING':
+                        return 'string'
+                    elif t == 'BOOLEAN':
+                        return 'boolean'
+                    elif t == 'DATE':
+                        return 'date'
+                    else:
+                        return 'string'
                 rows = [[cast_value(index, value.get('v')) for index, value in enumerate(row.get('f'))] for row in response.get('rows')]
+                rows.insert(0, [dict(id=s.get('name'), label=s.get('name'), type=change_type(s.get('type'))) for s in schema])
                 now = timezone.now()
                 job.cache_key = 'jobs/' + str(now.year) + '/' + str(now.month) + '/' + str(now.day) + '/' + str(uuid.uuid4())
                 #job.save()

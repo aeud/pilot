@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 
+{% block title %}Grpah visualization • {{ visualization.name }}{% endblock title %}
+{% block h1 %}{{ visualization.name }} > Graph{% endblock h1 %}
+
 {% block breadcrumbs_nav %}
 <ol class="breadcrumb">
     <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
     <li><a href="{% url 'visualizations_show' visualization.id %}">{{ visualization.name }}</a></li>
-    <li><a href="{% url 'visualizations_query' visualization.id %}">Query</a></li>
     <li class="active">Graph</li>
 </ol>
 {% endblock breadcrumbs_nav %}
@@ -17,6 +19,7 @@
     <h2>New query</h2>
     <form class="form-horizontal" action="{% url 'visualizations_graph_update' visualization.id %}" method="post">
         {% csrf_token %}
+        {% if dashboard %}<input class="hidden" name="dashboard" value="{{ dashboard.id }}">{% endif %}
         <div class="form-group">
             <label for="inputType" class="col-sm-2 control-label">Type</label>
             <div class="col-sm-10">
@@ -33,7 +36,13 @@
         <div class="form-group">
             <label for="inputOptions" class="col-sm-2 control-label">Options</label>
             <div class="col-sm-10">
-                <textarea class="form-control" id="inputOptions" name="options">{{ visualization.graph.options }}</textarea>
+                <textarea class="form-control" id="inputOptions" name="options">{{ visualization.graph.options|default:'' }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputMap" class="col-sm-2 control-label">Map Script</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" id="inputMap" name="map_script">{{ visualization.graph.map_script|default:'' }}</textarea>
             </div>
         </div>
         <div class="form-group">

@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^(?P<visualization_id>\d+)/graph/update$', 'apps.visualizations.views.graph_update', name='visualizations_graph_update'),
     url(r'^(?P<visualization_id>\d+)/execute$', 'apps.visualizations.views.execute', name='visualizations_execute'),
     url(r'^(?P<visualization_id>\d+)/remove$', 'apps.visualizations.views.remove', name='visualizations_remove'),
+    url(r'^(?P<visualization_id>\d+)/duplicate$', 'apps.visualizations.views.duplicate', name='visualizations_duplicate'),
 ]

@@ -1,10 +1,58 @@
 <nav class="menu">
+    {% if dashboard and 'dashboards_' in request.resolver_match.url_name %}
     <dl>
-        <dt data-link="nav-home">
-            <i class="fa fa-calendar fa-fw fa-lg"></i> Dashboards
+        <dt data-link="nav-dashboard">
+            <i class="material-icons">center_focus_strong</i> {{ dashboard.name }}
         </dt>
-        <dd class="active nav-home">
-            <a class="#">Yesterday highlights</a>
+        <dd class="{% if 'dashboards_' in request.resolver_match.url_name %}active{% endif %} nav-dashboard">
+            <a class="{% if 'dashboards_play' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_play' dashboard.slug %}">Play</a>
+            <a class="{% if 'dashboards_edit' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_edit' dashboard.id %}">Edit</a>
+            <a class="{% if 'dashboards_visualizations_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add visualization</a>
+        </dd>
+    </dl>
+    {% endif %}
+    {% if request.stars %}
+    <dl>
+        <dt data-link="nav-mydashboards">
+            <i class="material-icons">grade</i> My Dashboards
+        </dt>
+        <dd class="{% if 'dashboards_play' == request.resolver_match.url_name and dashboard in request.stars.all %}active{% endif %} nav-mydashboards">
+            {% for star in request.stars %}
+            <a class="{% if 'dashboards_play' == request.resolver_match.url_name and dashboard = star %}selected{% endif %}" href="{% url 'dashboards_play' star.slug %}">{{ star.name }}</a>
+            {% endfor %}
+        </dd>
+    </dl>
+    {% endif %}
+    <dl>
+        <dt data-link="nav-dashboards">
+            <i class="material-icons">dashboard</i> Dashboards
+        </dt>
+        <dd class="{% if not dashboard and 'dashboards_' in request.resolver_match.url_name %}active{% endif %} nav-dashboards">
+            <a class="{% if 'dashboards_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_index' %}">Library</a>
+            <a class="{% if 'dashboards_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_new' %}">New</a>
+        </dd>
+    </dl>
+    {% if visualization %}
+    <dl>
+        <dt data-link="nav-visualization">
+            <i class="material-icons">center_focus_strong</i> {{ visualization.name }}
+        </dt>
+        <dd class="active nav-visualization">
+            <a class="{% if 'visualizations_show' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_show' visualization.id %}">Show</a>
+            <a class="{% if 'visualizations_edit' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_edit' visualization.id %}">Edit</a>
+            <a class="{% if 'visualizations_query' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_query' visualization.id %}">Query</a>
+            <a class="{% if 'visualizations_graph' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_graph' visualization.id %}">Graph</a>
+            <a href="{% url 'visualizations_remove' visualization.id %}">Remove</a>
+        </dd>
+    </dl>
+    {% endif %}
+    <dl>
+        <dt data-link="nav-visualizations">
+            <i class="material-icons">insert_chart</i> Visualizations
+        </dt>
+        <dd class="{% if not visualization and 'visualizations_' in request.resolver_match.url_name %}active{% endif %} nav-visualizations">
+            <a class="{% if 'visualizations_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_index' %}">View all</a>
+            <a class="{% if 'visualizations_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_new' %}">New</a>
         </dd>
     </dl>
 </nav>

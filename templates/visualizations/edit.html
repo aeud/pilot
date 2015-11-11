@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
+{% block title %}Edit visualization • {{ visualization.name }}{% endblock title %}
+{% block h1 %}{{ visualization.name }} > Edit{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
+    <li><a href="{% url 'visualizations_show' visualization.id %}">{{ visualization.name }}</a></li>
+    <li class="active">Edit</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
 {% block container %}
 <div class="well">
     <h2>Edit visualization</h2>

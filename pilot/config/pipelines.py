@@ -10,6 +10,13 @@ PIPELINE_CSS = {
             'media': 'screen,projection',
         },
     },
+    'dashboards_play': {
+        'source_filenames': ('dashboards/play.scss',),
+        'output_filename': 'css/play.css',
+        'extra_context': {
+            'media': 'screen,projection',
+        },
+    },
 }
 
 PIPELINE_JS = {

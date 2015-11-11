@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% load pipeline %}
+
+{% block stylesheets %}
+{{ block.super }}
+{% stylesheet 'dashboards_play' %}
+<style>
+
+</style>
+{% endblock stylesheets %}
+
+{% block title %}Dashboard {{ dashboard.name }}{% endblock title %}
+{% block h1 %}{{ dashboard.name }}{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="{% url 'dashboards_edit' dashboard.id %}">Edit</a></li>
+            <li><a href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add a visualization</a></li>
+            <li role="separator" class="divider"></li>
+            {% if request.user in dashboard.star_users.all %}
+            <li><a href="{% url 'dashboards_unstar' dashboard.id %}">Unstar</a></li>
+            {% else %}
+            <li><a href="{% url 'dashboards_star' dashboard.id %}">Star</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+<ol class="breadcrumb">
+    <li><a href="{% url 'dashboards_index' %}">Dashboards</a></li>
+    <li class="active">{{ dashboard.name }}</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block header %}
+{{ block.super }}
+<div class="star visible-md visible-lg">
+    {% if request.user in dashboard.star_users.all %}
+    <a href="{% url 'dashboards_unstar' dashboard.id %}">
+        <i class="material-icons">star</i>
+        <i class="material-icons hover">star_border</i>
+    </a>
+    {% else %}
+    <a href="{% url 'dashboards_star' dashboard.id %}">
+        <i class="material-icons">star_border</i>
+        <i class="material-icons hover">star</i>
+    </a>
+    {% endif %}
+</div>
+{% endblock header %}
+
+{% block container %}
+<div class="row">
+    {% for dashboard_entity in dashboard_entities %}
+    <div class="{{ dashboard_entity.size }}">
+        <div class="well wait chart" id="w_{{ dashboard_entity.visualization.id }}">
+            <div class="pull-right">
+                <div class="btn-group">
+                    <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="material-icons">more_vert</i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit visualization</a></li>
+                        <li><a href="{% url 'visualizations_query' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit query</a></li>
+                        <li><a href="{% url 'visualizations_graph' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit chart</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'dashboards_visualizations_remove' dashboard.id dashboard_entity.id %}">Remove</a></li>
+                        {% comment %}
+                        <li role="separator" class="divider"></li>
+                        <li><a href="#">Download CSV</a></li>
+                        {% endcomment %}
+                    </ul>
+                </div>
+            </div>
+            <h2>{{ dashboard_entity.visualization.name }}</h2>
+            <div id="v_{{ dashboard_entity.visualization.id }}"></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script>
+$('.chart').prepend($('<div>').attr('class', 'spinner').append($('<div>').attr('class', 'dot1')).append($('<div>').attr('class', 'dot2')));
+google.load('visualization', '1');
+function buildDataTable(s3URL, callback){
+    $.ajax({
+        url: s3URL,
+        success: function(data){
+            callback(data.rows);
+        }
+    });
+}
+function drawVisualization() {
+    {% for dashboard_entity in dashboard_entities %}
+    $.ajax({
+        url: '{% url 'visualizations_execute' dashboard_entity.visualization.id %}',
+        success: function(data){
+            buildDataTable(data.url, function(array){
+                {% if dashboard_entity.visualization.graph.map_script %}
+                array = ({{ dashboard_entity.visualization.graph.map_script|safe }})(array);
+                {% endif %}
+                google.visualization.drawChart({
+                    containerId: 'v_{{ dashboard_entity.visualization.id }}',
+                    dataTable: google.visualization.arrayToDataTable(array),
+                    chartType: '{{ dashboard_entity.visualization.graph.chart_type }}',
+                    options: { height: 400, width: '100%' }
+                });
+                $('#w_{{ dashboard_entity.visualization.id }}').removeClass('wait');
+            });
+        }
+    });
+    {% endfor %}
+}
+google.setOnLoadCallback(drawVisualization);
+</script>
+{% endblock javascripts %}

@@ -36,6 +36,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'pipeline.middleware.MinifyHTMLMiddleware',
+    'apps.accounts.middleware.CustomAuthMiddleware',
 )
 
 ROOT_URLCONF = 'urls.root'

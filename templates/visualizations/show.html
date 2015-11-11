@@ -1,6 +1,21 @@
 {% extends "base.html" %}
 
+{% block title %}Visualization • {{ visualization.name }}{% endblock title %}
+{% block h1 %}{{ visualization.name }}{% endblock h1 %}
+
 {% block breadcrumbs_nav %}
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="{% url 'visualizations_duplicate' visualization.id %}">Duplicate</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'visualizations_remove' visualization.id %}">Remove</a></li>
+        </ul>
+    </div>
+</div>
 <ol class="breadcrumb">
     <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
     <li class="active">{{ visualization.name }}</li>
@@ -8,32 +23,55 @@
 {% endblock breadcrumbs_nav %}
 
 {% block container %}
+{% comment %}
+{% if visualization.description %}
+<div class="visualization-description">
+    <div class="description-md">{{ visualization.description }}</div>
+</div>
+{% endif %}
+{% endcomment %}
+{% if relative_dashboards|length > 0 %}
+<h2>Dashboards</h2>
+<div class="row">
+    {% for dashboard in relative_dashboards %}
+    <div class="col-lg-3 col-md-4 col-sm-2">
+        <a class="well" href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard.name }}</a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <div class="row">
     <div class="col-md-6">
         <div class="well">
-            <h2>{{ visualization.name }}</h2>
-            {{ visualization.description }}
-            <a href="{% url 'visualizations_edit' visualization.id %}">edit</a>
-        </div>
-        <div class="well">
-            <h2>Query</h2>
-            <pre>{{ visualization.query.script|linebreaks }}</pre>
-            <a href="{% url 'visualizations_query' visualization.id %}">edit</a>
+            <h2>Table</h2>
+            <div id="table_div"></div>
         </div>
     </div>
     <div class="col-md-6">
         <div class="well">
             <h2>Graph</h2>
             <div id="visualization_div"></div>
-            <a href="{% url 'visualizations_graph' visualization.id %}">edit</a>
-        </div>
-        <div class="well">
-            <h2>Table</h2>
-            <div id="table_div"></div>
         </div>
     </div>
 </div>
-<a href="{% url 'visualizations_remove' visualization.id %}">remove</a>
+<div class="row">
+    <div class="col-md-12">
+        <div class="well">
+            <h2>Query</h2>
+            <pre>{{ visualization.query.script|linebreaks }}</pre>
+        </div>
+    </div>
+</div>
+{% if visualization.graph.map_script %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="well">
+            <h2>Map script</h2>
+            <pre>{{ visualization.graph.map_script|linebreaks }}</pre>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock container %}
 
 {% block javascripts %}
@@ -44,18 +82,7 @@ function buildDataTable(s3URL, callback){
     $.ajax({
         url: s3URL,
         success: function(data){
-            var dataTable = new google.visualization.DataTable();
-            data.schema.forEach(function(col){
-                var type = col.type;
-                var newType;
-                if (type == 'INTEGER' || type == 'FLOAT') newType = 'number';
-                else if (type == 'STRING') newType = 'string';
-                else if (type == 'BOOLEAN') newType = 'boolean';
-                else if (type == 'DATE') newType = 'date';
-                dataTable.addColumn(newType, col.name);
-            });
-            dataTable.addRows(data.rows);
-            callback(dataTable);
+            callback(data.rows);
         }
     });
 }
@@ -63,21 +90,24 @@ function drawVisualization() {
     $.ajax({
         url: '{% url 'visualizations_execute' visualization.id %}',
         success: function(data){
-            buildDataTable(data.url, function(dataTable){
+            buildDataTable(data.url, function(array){
+                {% if visualization.graph.map_script %}
+                array = ({{ visualization.graph.map_script|safe }})(array);
+                {% endif %}
                 google.visualization.drawChart({
                     containerId: 'visualization_div',
-                    dataTable: dataTable,
+                    dataTable: google.visualization.arrayToDataTable(array),
                     chartType: '{{ visualization.graph.chart_type }}',
                     options: {
-                        height: 400
+                        height: 400, width: '100%'
                     }
                 });
                 google.visualization.drawChart({
                     containerId: 'table_div',
-                    dataTable: dataTable,
+                    dataTable: google.visualization.arrayToDataTable(array),
                     chartType: 'Table',
                     options: {
-                        height: 400
+                        height: 400, width: '100%'
                     }
                 });
             });

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Add visualization{% endblock title %}
+{% block h1 %}Edit visualization{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'dashboards_index' %}">Dashboards</a></li>
+    <li><a href="{% url 'dashboards_show' dashboard.id %}">{{ dashboard.name }}</a></li>
+    <li><a href="{% url 'dashboards_show' dashboard.id %}">Visualizations</a></li>
+    <li><a href="{% url 'dashboards_show' dashboard.id %}">{{ dashboard_entity.visualization.name }}</a></li>
+    <li class="active">Edit</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+<div class="well">
+    <h2>Edit visualization</h2>
+    {% include "dashboards/_form_visualization.html" %}
+</div>
+{% endblock container %}
