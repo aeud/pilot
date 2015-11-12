@@ -107,11 +107,18 @@ function drawVisualization() {
                 {% if dashboard_entity.visualization.graph.map_script %}
                 array = ({{ dashboard_entity.visualization.graph.map_script|safe }})(array);
                 {% endif %}
+                {% if dashboard_entity.visualization.graph.options %}
+                var options = {{ dashboard_entity.visualization.graph.options|safe }};
+                {% else %}
+                var options = {}
+                {% endif %}
+                if (!options.width) options.width = '100%';
+                if (!options.height) options.height = 400;
                 google.visualization.drawChart({
                     containerId: 'v_{{ dashboard_entity.visualization.id }}',
                     dataTable: google.visualization.arrayToDataTable(array),
                     chartType: '{{ dashboard_entity.visualization.graph.chart_type }}',
-                    options: { height: 400, width: '100%' }
+                    options: options
                 });
                 $('#w_{{ dashboard_entity.visualization.id }}').removeClass('wait');
             });

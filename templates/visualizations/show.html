@@ -94,13 +94,18 @@ function drawVisualization() {
                 {% if visualization.graph.map_script %}
                 array = ({{ visualization.graph.map_script|safe }})(array);
                 {% endif %}
+                {% if visualization.graph.options %}
+                var options = {{ visualization.graph.options|safe }};
+                {% else %}
+                var options = {}
+                {% endif %}
+                if (!options.width) options.width = '100%';
+                if (!options.height) options.height = 400;
                 google.visualization.drawChart({
                     containerId: 'visualization_div',
                     dataTable: google.visualization.arrayToDataTable(array),
                     chartType: '{{ visualization.graph.chart_type }}',
-                    options: {
-                        height: 400, width: '100%'
-                    }
+                    options: options
                 });
                 google.visualization.drawChart({
                     containerId: 'table_div',

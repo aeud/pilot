@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Grpah visualization • {{ visualization.name }}{% endblock title %}
+{% block title %}Graph visualization • {{ visualization.name }}{% endblock title %}
 {% block h1 %}{{ visualization.name }} > Graph{% endblock h1 %}
 
 {% block breadcrumbs_nav %}
@@ -61,18 +61,7 @@
         $.ajax({
             url: s3URL,
             success: function(data){
-                var dataTable = new google.visualization.DataTable();
-                data.schema.forEach(function(col){
-                    var type = col.type;
-                    var newType;
-                    if (type == 'INTEGER' || type == 'FLOAT') newType = 'number';
-                    else if (type == 'STRING') newType = 'string';
-                    else if (type == 'BOOLEAN') newType = 'boolean';
-                    else if (type == 'DATE') newType = 'date';
-                    dataTable.addColumn(newType, col.name);
-                });
-                dataTable.addRows(data.rows);
-                callback(dataTable);
+                callback(data.rows);
             }
         });
     }
@@ -85,13 +74,13 @@
             success: function(data){
                 console.log(data);
                 url = data.url;
-                buildDataTable(url, function(dataTable){
+                buildDataTable(url, function(array){
+                    console.log(array);
                     var options = {
-                        title:'How Much Pizza I Ate Last Night',
                         width: '100%',
                         height: '100%'
                     };
-                    new google.visualization.Table(document.getElementById('table_div')).draw(dataTable, options);
+                    new google.visualization.Table(document.getElementById('table_div')).draw(google.visualization.arrayToDataTable(array), options);
                 });
             },
             error: function(err){

@@ -9,16 +9,20 @@ from oauth2client.client import OAuth2Credentials as Credentials
 from datetime import datetime, timedelta
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+import pandas as pd
 
 class Query(models.Model):
     script        = models.TextField()
     checksum      = models.CharField(max_length=32)
     created_at    = models.DateTimeField(auto_now_add=True)
     updated_at    = models.DateTimeField(auto_now=True)
+    unstack       = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         m = hashlib.md5()
         m.update(self.script.encode('utf-8'))
+        if self.unstack:
+            m.update('unstack'.encode('utf-8'))
         self.checksum = m.hexdigest()
         return super(Query, self).save(*args, **kwargs)
 
@@ -69,14 +73,15 @@ class Visualization(models.Model):
                     col['name'] = col.get('name').replace('_', ' ')
                     return col
                 schema = [replace_name(col) for col in response.get('schema').get('fields')]
+                print(response.get('schema').get('fields'))
                 def cast_value(index, value):
                     column = schema[index]
                     column_type = column.get('type')
                     if column_type == 'INTEGER':
-                        return dict(v=int(value))
+                        return int((value if value else '0'))
                     elif column_type == 'FLOAT':
-                        return dict(v=float(value))
-                    return dict(v=value)
+                        return float(value if value else '0')
+                    return value
                 def change_type(t):
                     if t == 'INTEGER' or t == 'FLOAT':
                         return 'number'
@@ -89,7 +94,20 @@ class Visualization(models.Model):
                     else:
                         return 'string'
                 rows = [[cast_value(index, value.get('v')) for index, value in enumerate(row.get('f'))] for row in response.get('rows')]
-                rows.insert(0, [dict(id=s.get('name'), label=s.get('name'), type=change_type(s.get('type'))) for s in schema])
+                if self.query.unstack:
+                    p = pd.DataFrame(rows).set_index([0,1]).unstack(-1).fillna(0)
+                    matrix = p.as_matrix().tolist()
+                    rows_index = p.index.values
+                    columns_index = [v[1] for v in p.columns.values]
+                    columns_index.insert(0, schema[0].get('name'))
+                    new_matrix = [columns_index]
+                    for index, row in enumerate(matrix):
+                        row = [cast_value(2, c) for c in row]
+                        row.insert(0, cast_value(0, rows_index[index]))
+                        new_matrix.append(row)
+                    rows = new_matrix
+                else:
+                    rows.insert(0, [dict(id=s.get('name'), label=s.get('name'), type=change_type(s.get('type'))) for s in schema])
                 now = timezone.now()
                 job.cache_key = 'jobs/' + str(now.year) + '/' + str(now.month) + '/' + str(now.day) + '/' + str(uuid.uuid4())
                 #job.save()
@@ -98,7 +116,6 @@ class Visualization(models.Model):
                 if self.cache_for:
                     job.cache_url = job.get_results_url(self.cache_for)
                     job.cached_until = timezone.now() + timedelta(seconds=self.cache_for)
-                    job.save()
                 elif self.cache_until:
                     now = timezone.now()
                     new_date = pytz.timezone('Asia/Singapore').localize(datetime(now.year, now.month, now.day, self.cache_until.hour, self.cache_until.minute))
@@ -106,7 +123,6 @@ class Visualization(models.Model):
                         new_date = new_date + timedelta(days=1)
                     job.cache_url = job.get_results_url((new_date-now).total_seconds())
                     job.cached_until = new_date
-                    job.save()
                 job.save()
                 return [None, job]
         return ['No query', None]
@@ -144,6 +160,7 @@ class Job(models.Model):
         key.key = self.results_key()
         key.set_metadata('Content-Type', 'application/json')
         key.set_metadata('Content-Encoding', 'gzip')
+        print(rows)
         key.set_contents_from_string(gzip.compress(bytes(json.dumps(dict(schema=schema, rows=rows, cached_at=datetime.now().isoformat())), 'utf-8')))
 
     def get_schema_url(self):

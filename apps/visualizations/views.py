@@ -68,10 +68,12 @@ def query_update(request, visualization_id):
     if visualization.query:
         query = visualization.query
         query.script = request.POST.get('script')
+        query.unstack = int(request.POST.get('unstack', '0')) == 1
         query.save()
     else:
         query = Query()
         query.script = request.POST.get('script')
+        query.unstack = int(request.POST.get('unstack', '0')) == 1
         query.save()
         visualization.query = query
         visualization.save()
@@ -131,7 +133,7 @@ def duplicate(request, visualization_id):
                                       cache_for=visualization.cache_for,
                                       cache_until=visualization.cache_until)
     if visualization.query:
-        new_query = Query(script=visualization.query.script)
+        new_query = Query(script=visualization.query.script, unstack=visualization.query.unstack)
         new_query.save()
         new_visualization.query = new_query
 
