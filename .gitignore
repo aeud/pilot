@@ -11,4 +11,3 @@ parts
 src/*.egg-info
 .sass-cache
 assets/pipeline
-migrations/
