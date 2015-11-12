@@ -6,3 +6,5 @@ oauth2client
 boto
 django-pipeline
 pandas
+requests
+pyopenssl

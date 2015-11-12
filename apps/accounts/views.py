@@ -15,7 +15,7 @@ def index(request):
 
 def get_flow(request):
     return client.flow_from_clientsecrets(
-        '/Users/adrien/Downloads/client_secret_315463305042-l4e6vp0ds763snsgbi6rvu80r02cjufs.apps.googleusercontent.com.json',
+        settings.GA_JSON_PATH,
         scope='https://www.googleapis.com/auth/bigquery',
         redirect_uri=request.build_absolute_uri(reverse('accounts_bigquery_connect_callback')))
 
@@ -62,7 +62,6 @@ def bq_remove_project(request):
     return redirect(bq_connect)
 
 def login_google(request):
-    print(settings.GA_CLIENT_ID)
     url = 'https://accounts.google.com/o/oauth2/auth?client_id='
     url += settings.GA_CLIENT_ID
     url += '&response_type=code&max_auth_age=0&scope=openid email&redirect_uri='
