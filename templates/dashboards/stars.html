@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Starred dashboards{% endblock title %}
+{% block h1 %}Starred dashboards{% endblock h1 %}
+
+{% block container %}
+{% if request.stars|length > 0 %}
+<h2>Stars</h2>
+<div class="row">
+    {% for dashboard in request.stars %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <a class="well" href="{% url 'dashboards_play' dashboard.slug %}">
+            {{ dashboard.name }}
+        </a>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock container %}

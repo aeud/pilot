@@ -7,9 +7,8 @@ def index(request):
     dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True)
     return render(request, 'dashboards/index.html', dict(dashboards=dashboards))
 
-def test(request):
-    all_visualizations = Visualization.objects.filter(is_active=True)
-    return render(request, 'dashboards/test.html', dict(all_visualizations=all_visualizations))
+def stars(request):
+    return render(request, 'dashboards/stars.html')
 
 def show(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)

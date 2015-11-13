@@ -11,7 +11,23 @@ from apps.accounts.models import Account, BigQueryProject, User
 
 
 def index(request):
-    return render(request, 'accounts/index.html')
+    pending_invitations = User.objects.filter(account=request.user.account)
+    return render(request, 'accounts/index.html', dict(pending_invitations=pending_invitations))
+
+def invite(request):
+    return render(request, 'accounts/invite.html')
+
+def invite_post(request):
+    email = request.POST.get('email')
+    try:
+        user = User.objects.get(email=email)
+        if user.account:
+            return redirect(index)
+        user.account = request.user.account
+    except User.DoesNotExist:
+        user = User(email=email, account=request.user.account)
+    user.save()
+    return redirect(index)
 
 def get_flow(request):
     return client.flow_from_clientsecrets(
@@ -27,7 +43,7 @@ def bq_connect(request):
     bq_project = account.bq_project
     if not bq_project:
         return redirect(bq_choose_project)
-    return redirect(index)
+    return redirect('home')
 
 def oauth_callback(request):
     account = request.user.account

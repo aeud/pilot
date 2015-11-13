@@ -1,3 +1,4 @@
+{% if request.user.account %}
 <nav class="menu">
     {% if dashboard and 'dashboards_' in request.resolver_match.url_name %}
     <dl>
@@ -61,6 +62,8 @@
         </dt>
         <dd class="{% if 'accounts_' in request.resolver_match.url_name %}active{% endif %} nav-account">
             <a class="{% if 'accounts_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'accounts_index' %}">Settings</a>
+            <a class="{% if 'accounts_invite' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'accounts_invite' %}">Invite</a>
         </dd>
     </dl>
 </nav>
+{% endif %}

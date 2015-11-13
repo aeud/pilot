@@ -1,5 +1,5 @@
 <div class="nav">
-    <div class="logo"><a href="#">LOGO</a></div>
+    <div class="logo"><a href="{% url 'home' %}">SPOT</a></div>
     <div class="divider"></div>
     {% if request.user %}
     <div class="menu"> {% include "_layout/_menu.html" %} </div>

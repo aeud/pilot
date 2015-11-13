@@ -4,7 +4,6 @@ urlpatterns = [
     url(r'^$', 'apps.dashboards.views.index', name='dashboards_index'),
     url(r'^new$', 'apps.dashboards.views.new', name='dashboards_new'),
     url(r'^create$', 'apps.dashboards.views.create', name='dashboards_create'),
-    url(r'^test$', 'apps.dashboards.views.test', name='dashboards_test'),
     url(r'^(?P<dashboard_id>\d+)/$', 'apps.dashboards.views.show', name='dashboards_show'),
     url(r'^(?P<dashboard_slug>[a-z0-9\-]+)/$', 'apps.dashboards.views.play', name='dashboards_play'),
     url(r'^(?P<dashboard_id>\d+)/edit$', 'apps.dashboards.views.edit', name='dashboards_edit'),

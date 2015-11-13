@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 from . import accounts, visualizations, dashboards
 
 urlpatterns = [
+    url(r'^$', 'apps.dashboards.views.stars', name='home'),
     url(r'^account/', include(accounts)),
     url(r'^visualizations/', include(visualizations)),
     url(r'^dashboards/', include(dashboards)),

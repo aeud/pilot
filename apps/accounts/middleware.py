@@ -16,7 +16,13 @@ class CustomAuthMiddleware(object):
 
     def process_request(self, request):
         if request.user.id:
-            request.stars = Dashboard.objects.filter(star_users=request.user).order_by('name')
+            if request.user.account:
+                request.stars = Dashboard.objects.filter(star_users=request.user).order_by('name')
+            else:
+                return render(request, 'errors/wait.html', status=403)
+        else:
+            if not re.search('login|logout|robots\.txt', request.path_info):
+                return render(request, 'errors/403.html', status=403)
         return None
 
     def process_response(self, request, response):

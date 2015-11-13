@@ -10,4 +10,6 @@ urlpatterns = [
     url(r'^aws/connect$', 'apps.accounts.views.aws_connect', name="accounts_aws_connect"),
     url(r'^aws/connect/post$', 'apps.accounts.views.aws_connect_post', name="accounts_aws_connect_post"),
     url(r'^aws/remove$', 'apps.accounts.views.aws_remove', name="accounts_aws_remove"),
+    url(r'^invite$', 'apps.accounts.views.invite', name="accounts_invite"),
+    url(r'^invite/post$', 'apps.accounts.views.invite_post', name="accounts_invite_post"),
 ]
