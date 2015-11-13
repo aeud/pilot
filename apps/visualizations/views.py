@@ -146,5 +146,34 @@ def duplicate(request, visualization_id):
     new_visualization.save()
     return redirect(edit, visualization_id=new_visualization.id)
 
+def v_export(request, visualization_id):
+    visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    response = HttpResponse(json.dumps([visualization.to_dict()]), 'application/json')
+    response['Content-Disposition'] = 'attachment; filename="visualization_' + str(visualization.id) + '.json"'
 
 
+def v_import(request):
+    return render(request, 'visualizations/import.html')
+
+def v_import_post(request):
+    array = json.loads(request.POST.get('file'))
+    for v in array:
+        visualization = Visualization(name=v.get('name'),
+                                      description=v.get('description'),
+                                      account=request.user.account,
+                                      cache_for=v.get('cache_for'),
+                                      cache_until=v.get('cache_until'),)
+        if v.get('query'):
+            query = Query(script=v.get('query').get('script'),
+                          unstack=v.get('query').get('unstack'),)
+            query.save()
+            visualization.query = query
+        if v.get('graph'):
+            graph = Graph(options=v.get('graph').get('options'),
+                          chart_type=v.get('graph').get('chart_type'),
+                          map_script=v.get('graph').get('map_script'),)
+            graph.save()
+            visualization.graph = graph
+
+        visualization.save()
+    return redirect(index)

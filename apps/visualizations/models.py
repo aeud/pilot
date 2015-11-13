@@ -18,6 +18,10 @@ class Query(models.Model):
     updated_at    = models.DateTimeField(auto_now=True)
     unstack       = models.BooleanField(default=False)
 
+    def to_dict(self):
+        return dict(script=self.script,
+                    unstack=self.unstack,)
+
     def save(self, *args, **kwargs):
         m = hashlib.md5()
         m.update(self.script.encode('utf-8'))
@@ -31,6 +35,11 @@ class Graph(models.Model):
     chart_type    = models.CharField(max_length=255)
     map_script    = models.TextField(null=True)
 
+    def to_dict(self):
+        return dict(options=self.options,
+                    chart_type=self.chart_type,
+                    map_script=self.map_script,)
+
 class Visualization(models.Model):
     is_active    = models.BooleanField(default=True)
     query        = models.OneToOneField(Query, null=True)
@@ -42,6 +51,14 @@ class Visualization(models.Model):
     updated_at   = models.DateTimeField(auto_now=True)
     cache_for    = models.IntegerField(null=True)
     cache_until  = models.TimeField(null=True)
+
+    def to_dict(self):
+        return dict(name=self.name,
+                    description=self.description,
+                    cache_for=self.cache_for,
+                    cache_until=self.cache_until,
+                    query=self.query.to_dict(),
+                    graph=self.graph.to_dict(),)
 
     def execute(self):
         err = None

@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
 {% block breadcrumbs_nav %}
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="{% url 'visualizations_import' %}">Import</a></li>
+        </ul>
+    </div>
+</div>
 <ol class="breadcrumb">
     <li class="active">Visualizations</li>
 </ol>

@@ -11,6 +11,7 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="{% url 'visualizations_duplicate' visualization.id %}">Duplicate</a></li>
+            <li><a href="{% url 'visualizations_export' visualization.id %}">Export</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{% url 'visualizations_remove' visualization.id %}">Remove</a></li>
         </ul>
