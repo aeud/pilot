@@ -38,6 +38,9 @@ def show(request, visualization_id):
 
 def edit(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    if request.GET.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.GET.get('dashboard'), account=request.user.account)
+        return render(request, 'visualizations/edit.html', dict(visualization=visualization, dashboard=dashboard))
     return render(request, 'visualizations/edit.html', dict(visualization=visualization))
 
 def update(request, visualization_id):
@@ -54,6 +57,9 @@ def update(request, visualization_id):
         visualization.cache_for = None
         visualization.cache_until = None
     visualization.save()
+    if request.POST.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.POST.get('dashboard'), account=request.user.account)
+        return redirect('dashboards_play', dashboard_slug=dashboard.slug)
     return redirect(show, visualization_id=visualization.id)
 
 def query(request, visualization_id):

@@ -61,11 +61,15 @@
         <div class="well wait chart" id="w_{{ dashboard_entity.visualization.id }}">
             <div class="pull-right">
                 <div class="btn-group">
+                    {% if dashboard_entity.visualization.description %}
+                    <i class="material-icons popover-icon" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{ dashboard_entity.visualization.description }}">help</i>
+                    {% endif %}
                     <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="material-icons">more_vert</i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
-                        <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit visualization</a></li>
+                        <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit entity</a></li>
+                        <li><a href="{% url 'visualizations_edit' dashboard_entity.visualization.id %}">Edit visualization</a></li>
                         <li><a href="{% url 'visualizations_query' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit query</a></li>
                         <li><a href="{% url 'visualizations_graph' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit chart</a></li>
                         <li role="separator" class="divider"></li>
@@ -104,6 +108,22 @@ function drawVisualization() {
         url: '{% url 'visualizations_execute' dashboard_entity.visualization.id %}',
         success: function(data){
             buildDataTable(data.url, function(array){
+                if (array[0]) {
+                    var headers = array[0];
+                    headers.forEach(function(h, _i){
+                        if (typeof h == 'object' && h.type && h.type == 'date') {
+                            array.forEach(function(row, _j){
+                                if (_j > 0) {
+                                    if (typeof array[_j][_i] == 'object') {
+                                        array[_j][_i].v = new Date(array[_j][_i].v);
+                                    } else {
+                                        array[_j][_i] = new Date(array[_j][_i]);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
                 {% if dashboard_entity.visualization.graph.map_script %}
                 array = ({{ dashboard_entity.visualization.graph.map_script|safe }})(array);
                 {% endif %}

@@ -16,6 +16,7 @@
     <h2>Edit visualization</h2>
     <form class="form-horizontal" action="{% url 'visualizations_update' visualization.id %}" method="post">
         {% csrf_token %}
+        {% if dashboard %}<input class="hidden" name="dashboard" value="{{ dashboard.id }}">{% endif %}
         <div class="form-group">
             <label for="inputName" class="col-sm-2 control-label">Name</label>
             <div class="col-sm-10">

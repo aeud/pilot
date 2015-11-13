@@ -92,6 +92,24 @@ function drawVisualization() {
         url: '{% url 'visualizations_execute' visualization.id %}',
         success: function(data){
             buildDataTable(data.url, function(array){
+                if (array[0]) {
+                    var headers = array[0];
+                    headers.forEach(function(h, _i){
+                        if (typeof h == 'object' && h.type && h.type == 'date') {
+                            array.forEach(function(row, _j){
+                                if (_j > 0) {
+                                    if (_j > 0) {
+                                        if (typeof array[_j][_i] == 'object') {
+                                            array[_j][_i].v = new Date(array[_j][_i].v);
+                                        } else {
+                                            array[_j][_i] = new Date(array[_j][_i]);
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
                 {% if visualization.graph.map_script %}
                 array = ({{ visualization.graph.map_script|safe }})(array);
                 {% endif %}

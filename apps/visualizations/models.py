@@ -90,13 +90,15 @@ class Visualization(models.Model):
                     col['name'] = col.get('name').replace('_', ' ')
                     return col
                 schema = [replace_name(col) for col in response.get('schema').get('fields')]
-                def cast_value(index, value):
+                def cast_value(index, value, p=1):
                     column = schema[index]
                     column_type = column.get('type')
                     if column_type == 'INTEGER':
                         return int((value if value else '0'))
                     elif column_type == 'FLOAT':
                         return float(value if value else '0')
+                    elif column_type == 'TIMESTAMP' and p > 1:
+                        return datetime.fromtimestamp(int(float(value))).isoformat() if value else None
                     return value
                 def change_type(t):
                     if t == 'INTEGER' or t == 'FLOAT':
@@ -107,6 +109,8 @@ class Visualization(models.Model):
                         return 'boolean'
                     elif t == 'DATE':
                         return 'date'
+                    elif t == 'TIMESTAMP':
+                        return 'date'
                     else:
                         return 'string'
                 rows = [[cast_value(index, value.get('v')) for index, value in enumerate(row.get('f'))] for row in response.get('rows')]
@@ -115,11 +119,12 @@ class Visualization(models.Model):
                     matrix = p.as_matrix().tolist()
                     rows_index = p.index.values
                     columns_index = [v[1] for v in p.columns.values]
-                    columns_index.insert(0, schema[0].get('name'))
+                    s = schema[0]
+                    columns_index.insert(0, dict(id=s.get('name'), label=s.get('name'), type=change_type(s.get('type'))))
                     new_matrix = [columns_index]
                     for index, row in enumerate(matrix):
-                        row = [cast_value(2, c) for c in row]
-                        row.insert(0, cast_value(0, rows_index[index]))
+                        row = [cast_value(2, c, 2) for c in row]
+                        row.insert(0, cast_value(0, rows_index[index], 2))
                         new_matrix.append(row)
                     rows = new_matrix
                 else:

@@ -33,5 +33,6 @@ $('.menu > dl > dt').click(function(){
     else $('dd.' + name).addClass('active');
     return false;
 });
-
-
+$(function () {
+    $('[data-toggle="popover"]').popover();
+});
