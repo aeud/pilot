@@ -90,3 +90,20 @@ def login_google_callback(request):
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     manual_login(request, user)
     return redirect(index)
+
+def aws_connect(request):
+    return render(request, 'accounts/aws-credentials.html')
+
+def aws_connect_post(request):
+    account = request.user.account
+    account.aws_access_key_id = request.POST.get('key')
+    account.aws_secret_access_key = request.POST.get('secret')
+    account.save()
+    return redirect(index)
+
+def aws_remove(request):
+    account = request.user.account
+    account.aws_access_key_id = None
+    account.aws_secret_access_key = None
+    account.save()
+    return redirect(aws_connect)

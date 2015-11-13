@@ -55,4 +55,12 @@
             <a class="{% if 'visualizations_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_new' %}">New</a>
         </dd>
     </dl>
+    <dl>
+        <dt data-link="nav-account">
+            <i class="material-icons">face</i> Account
+        </dt>
+        <dd class="{% if 'accounts_' in request.resolver_match.url_name %}active{% endif %} nav-account">
+            <a class="{% if 'accounts_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'accounts_index' %}">Settings</a>
+        </dd>
+    </dl>
 </nav>

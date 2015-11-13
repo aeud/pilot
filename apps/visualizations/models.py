@@ -73,7 +73,6 @@ class Visualization(models.Model):
                     col['name'] = col.get('name').replace('_', ' ')
                     return col
                 schema = [replace_name(col) for col in response.get('schema').get('fields')]
-                print(response.get('schema').get('fields'))
                 def cast_value(index, value):
                     column = schema[index]
                     column_type = column.get('type')
@@ -145,7 +144,8 @@ class Job(models.Model):
         return self.cache_key
 
     def save_schema(self, schema):
-        conn = S3Connection()
+        account = Account.objects.get(visualization__query=self.query)
+        conn = S3Connection(aws_access_key_id=account.aws_access_key_id, aws_secret_access_key=account.aws_secret_access_key)
         bucket = conn.get_bucket('lx-pilot')
         key = Key(bucket)
         key.key = self.schema_key()
@@ -154,17 +154,18 @@ class Job(models.Model):
         key.set_contents_from_string(gzip.compress(bytes(json.dumps(schema), 'utf-8')))
 
     def save_results(self, rows, schema):
-        conn = S3Connection()
+        account = Account.objects.get(visualization__query=self.query)
+        conn = S3Connection(aws_access_key_id=account.aws_access_key_id, aws_secret_access_key=account.aws_secret_access_key)
         bucket = conn.get_bucket('lx-pilot')
         key = Key(bucket)
         key.key = self.results_key()
         key.set_metadata('Content-Type', 'application/json')
         key.set_metadata('Content-Encoding', 'gzip')
-        print(rows)
         key.set_contents_from_string(gzip.compress(bytes(json.dumps(dict(schema=schema, rows=rows, cached_at=datetime.now().isoformat())), 'utf-8')))
 
     def get_schema_url(self):
-        conn = S3Connection()
+        account = Account.objects.get(visualization__query=self.query)
+        conn = S3Connection(aws_access_key_id=account.aws_access_key_id, aws_secret_access_key=account.aws_secret_access_key)
         bucket = conn.get_bucket('lx-pilot')
         key = Key(bucket)
         key.key = self.schema_key()
@@ -172,7 +173,8 @@ class Job(models.Model):
         return simple_url
 
     def get_results_url(self, seconds=3600):
-        conn = S3Connection()
+        account = Account.objects.get(visualization__query=self.query)
+        conn = S3Connection(aws_access_key_id=account.aws_access_key_id, aws_secret_access_key=account.aws_secret_access_key)
         bucket = conn.get_bucket('lx-pilot')
         key = Key(bucket)
         key.key = self.results_key()

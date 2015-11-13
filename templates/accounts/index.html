@@ -1,5 +1,33 @@
-{% if request.user.account.bq_project %}
-{{ request.user.account.bq_project.project_id }} (<a href="{% url 'accounts_bigquery_remove_project' %}">delete</a>)
-{% else %}
-<a href="{% url 'accounts_bigquery_connect' %}">BQ</a>
-{% endif %}
+{% extends "base.html" %}
+
+{% block title %}My account{% endblock title %}
+{% block h1 %}My account{% endblock h1 %}
+
+{% block container %}
+<div class="row">
+    <div class="col-sm-6">
+        <div class="well">
+            <h2>BigQuery connection</h2>
+            <div>
+                {% if request.user.account.bq_project %}
+                {{ request.user.account.bq_project.project_id }} (<a href="{% url 'accounts_bigquery_remove_project' %}">delete</a>)
+                {% else %}
+                <a href="{% url 'accounts_bigquery_connect' %}">Connect</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="well">
+            <h2>AWS connection</h2>
+            <div>
+                {% if request.user.account.aws_access_key_id %}
+                {{ request.user.account.aws_access_key_id }} (<a href="{% url 'accounts_aws_remove' %}">delete</a>)
+                {% else %}
+                <a href="{% url 'accounts_bigquery_connect' %}">Connect</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock container %}

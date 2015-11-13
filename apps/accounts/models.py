@@ -37,12 +37,14 @@ class BigQueryProject(models.Model):
     updated_at  = models.DateTimeField(auto_now=True)
 
 class Account(models.Model):
-    name        = models.CharField(max_length=255, unique=True)
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
-    is_active   = models.BooleanField(default=True)
-    credentials = models.TextField(null=True)
-    bq_project  = models.OneToOneField(BigQueryProject, null=True)
+    name                  = models.CharField(max_length=255, unique=True)
+    created_at            = models.DateTimeField(auto_now_add=True)
+    updated_at            = models.DateTimeField(auto_now=True)
+    is_active             = models.BooleanField(default=True)
+    credentials           = models.TextField(null=True)
+    bq_project            = models.OneToOneField(BigQueryProject, null=True)
+    aws_access_key_id     = models.CharField(max_length=255, null=True)
+    aws_secret_access_key = models.CharField(max_length=255, null=True)
 
     def __str__(self):
         return self.name
