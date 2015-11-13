@@ -36,3 +36,4 @@ $('.menu > dl > dt').click(function(){
 $(function () {
     $('[data-toggle="popover"]').popover();
 });
+autosize($('textarea'));

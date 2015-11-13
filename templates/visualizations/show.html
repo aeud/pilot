@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">   
+{% endblock stylesheets %}
+
 {% block title %}Visualization • {{ visualization.name }}{% endblock title %}
 {% block h1 %}{{ visualization.name }}{% endblock h1 %}
 
@@ -59,7 +64,7 @@
     <div class="col-md-12">
         <div class="well">
             <h2>Query</h2>
-            <pre>{{ visualization.query.script|linebreaks }}</pre>
+            <pre><code class="sql">{{ visualization.query.script|linebreaks }}</code></pre>
         </div>
     </div>
 </div>
@@ -68,7 +73,7 @@
     <div class="col-md-12">
         <div class="well">
             <h2>Map script</h2>
-            <pre>{{ visualization.graph.map_script|linebreaks }}</pre>
+            <pre><code class="javascript">{{ visualization.graph.map_script|linebreaks }}</code></pre>
         </div>
     </div>
 </div>
@@ -77,6 +82,10 @@
 
 {% block javascripts %}
 {{ block.super }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/languages/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/languages/javascript.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 <script type='text/javascript'>
 google.load('visualization', '1');
 function buildDataTable(s3URL, callback){
