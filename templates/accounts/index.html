@@ -24,7 +24,7 @@
                 {% if request.user.account.aws_access_key_id %}
                 {{ request.user.account.aws_access_key_id }} (<a href="{% url 'accounts_aws_remove' %}">delete</a>)
                 {% else %}
-                <a href="{% url 'accounts_bigquery_connect' %}">Connect</a>
+                <a href="{% url 'accounts_aws_connect' %}">Connect</a>
                 {% endif %}
             </div>
         </div>
