@@ -150,7 +150,13 @@ def v_export(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
     response = HttpResponse(json.dumps([visualization.to_dict()]), 'application/json')
     response['Content-Disposition'] = 'attachment; filename="visualization_' + str(visualization.id) + '.json"'
+    return response
 
+def v_export_all(request):
+    visualizations = Visualization.objects.filter(account=request.user.account, is_active=True)
+    response = HttpResponse(json.dumps([visualization.to_dict() for visualization in visualizations]), 'application/json')
+    response['Content-Disposition'] = 'attachment; filename="visualization_all.json"'
+    return response
 
 def v_import(request):
     return render(request, 'visualizations/import.html')

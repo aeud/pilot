@@ -56,7 +56,7 @@ class Visualization(models.Model):
         return dict(name=self.name,
                     description=self.description,
                     cache_for=self.cache_for,
-                    cache_until=self.cache_until,
+                    cache_until=self.cache_until.isoformat() if self.cache_until else None,
                     query=self.query.to_dict(),
                     graph=self.graph.to_dict(),)
 
