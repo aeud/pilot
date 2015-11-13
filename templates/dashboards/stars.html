@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}Starred dashboards{% endblock title %}
-{% block h1 %}Starred dashboards{% endblock h1 %}
+{% block title %}My dashboards{% endblock title %}
+{% block h1 %}My dashboards{% endblock h1 %}
 
 {% block container %}
 {% if request.stars|length > 0 %}
-<h2>Stars</h2>
+<h2><i class="material-icons">grade</i> Stars</h2>
 <div class="row">
     {% for dashboard in request.stars %}
     <div class="col-lg-3 col-md-4 col-sm-6">
