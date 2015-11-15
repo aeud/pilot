@@ -69,15 +69,11 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit entity</a></li>
-                        <li><a href="{% url 'visualizations_edit' dashboard_entity.visualization.id %}">Edit visualization</a></li>
+                        <li><a href="{% url 'visualizations_edit' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit visualization</a></li>
                         <li><a href="{% url 'visualizations_query' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit query</a></li>
                         <li><a href="{% url 'visualizations_graph' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit chart</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="{% url 'dashboards_visualizations_remove' dashboard.id dashboard_entity.id %}">Remove</a></li>
-                        {% comment %}
-                        <li role="separator" class="divider"></li>
-                        <li><a href="#">Download CSV</a></li>
-                        {% endcomment %}
                     </ul>
                 </div>
             </div>
