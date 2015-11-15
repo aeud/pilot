@@ -43,7 +43,7 @@ def bq_connect(request):
     bq_project = account.bq_project
     if not bq_project:
         return redirect(bq_choose_project)
-    return redirect('home')
+    return redirect(index)
 
 def oauth_callback(request):
     account = request.user.account
@@ -52,7 +52,7 @@ def oauth_callback(request):
     credentials = flow.step2_exchange(auth_code)
     account.credentials = credentials.to_json()
     account.save()
-    return redirect(bq_connect)
+    return redirect('home')
 
 def bq_choose_project(request):
     account = request.user.account
