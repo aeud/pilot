@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from . import accounts, visualizations, dashboards, jobs
+from . import accounts, visualizations, dashboards, jobs, admin
 
 urlpatterns = [
     url(r'^$', 'apps.dashboards.views.stars', name='home'),
@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^visualizations/', include(visualizations)),
     url(r'^jobs/', include(jobs)),
     url(r'^dashboards/', include(dashboards)),
+    url(r'^admin/', include(admin)),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^login/google$', 'apps.accounts.views.login_google', name='login_google'),
     url(r'^login/google/callback$', 'apps.accounts.views.login_google_callback', name='login_google_callback'),
