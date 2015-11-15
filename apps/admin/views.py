@@ -18,4 +18,18 @@ order by i asc;
     cursor = connection.cursor()
     cursor.execute(query)
     jobs = cursor.fetchall()
-    return render(request, 'admin/index.html', dict(jobs=jobs))
+    query = """
+select
+    i::date date,
+    sum(case when v.is_active is not null then 1 else 0 end) new_visualizations
+from
+    generate_series(
+        CURRENT_DATE - '1 month'::interval + '1 day'::interval, CURRENT_DATE, '1 day'::interval
+    ) i left join pilot.visualizations_visualization v on (date(i) = date(v.created_at))
+group by i
+order by i asc;
+        """
+    cursor = connection.cursor()
+    cursor.execute(query)
+    visualizations = cursor.fetchall()
+    return render(request, 'admin/index.html', dict(jobs=jobs, visualizations=visualizations))

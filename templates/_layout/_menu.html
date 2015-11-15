@@ -65,5 +65,15 @@
             <a class="{% if 'accounts_invite' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'accounts_invite' %}">Invite</a>
         </dd>
     </dl>
+    {% if request.user.is_staff %}
+    <dl>
+        <dt data-link="nav-admin">
+            <i class="material-icons">settings</i> Admin
+        </dt>
+        <dd class="{% if 'admin_' in request.resolver_match.url_name %}active{% endif %} nav-admin">
+            <a class="{% if 'admin_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_index' %}">Index</a>
+        </dd>
+    </dl>
+    {% endif %}
 </nav>
 {% endif %}
