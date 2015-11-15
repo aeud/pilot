@@ -88,6 +88,7 @@
 <script>hljs.initHighlightingOnLoad();</script>
 <script type='text/javascript'>
 google.load('visualization', '1');
+google.load("visualization", "1.1", {packages:["calendar"]});
 function buildDataTable(s3URL, callback){
     $.ajax({
         url: s3URL,
