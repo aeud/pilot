@@ -58,7 +58,7 @@
 <div class="row">
     {% for dashboard_entity in dashboard_entities %}
     <div class="{{ dashboard_entity.size }}">
-        <div class="well wait chart" id="w_{{ dashboard_entity.visualization.id }}">
+        <div class="well wait chart dashboard-entity" data-url="{% url 'visualizations_execute' dashboard_entity.visualization.id %}" data-location="v_{{ dashboard_entity.visualization.id }}" data-chart="{{ dashboard_entity.visualization.graph.chart_type }}" id="w_{{ dashboard_entity.visualization.id }}">
             <div class="pull-right">
                 <div class="btn-group">
                     {% if dashboard_entity.visualization.description %}
@@ -107,6 +107,7 @@ function drawVisualization() {
     $.ajax({
         url: '{% url 'visualizations_execute' dashboard_entity.visualization.id %}',
         success: function(data){
+            console.log(data);
             buildDataTable(data.url, function(array){
                 if (array[0]) {
                     var headers = array[0];
@@ -142,6 +143,8 @@ function drawVisualization() {
                 });
                 $('#w_{{ dashboard_entity.visualization.id }}').removeClass('wait');
             });
+            console.log($('#v_{{ dashboard_entity.visualization.id }}'));
+            $('#w_{{ dashboard_entity.visualization.id }}').find('ul.dropdown-menu').append($('<li>').attr('class', 'divider')).append($('<li>').append($('<a>').attr('href', data.export_url).html('Download')));
         }
     });
     {% endfor %}

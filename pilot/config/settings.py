@@ -23,6 +23,7 @@ INSTALLED_APPS = (
     'pipeline',
     'apps.accounts',
     'apps.visualizations',
+    'apps.jobs',
     'apps.dashboards',
 )
 

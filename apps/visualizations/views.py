@@ -1,8 +1,16 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse
-from apps.visualizations.models import Query, Visualization, Job, Graph
+from django.utils import timezone
+from django.core.urlresolvers import reverse
+from apps.visualizations.models import Query, Visualization, Graph
+from apps.jobs.models import Job
 from apps.dashboards.models import Dashboard
-import json
+import json, pandas as pd, httplib2, hashlib, gzip, json, pytz, uuid
+from datetime import datetime, timedelta
+from oauth2client.client import OAuth2Credentials as Credentials
+from apiclient.errors import HttpError
+from oauth2client import client
+from apiclient.discovery import build
 
 def index(request):
     visualizations = Visualization.objects.filter(account=request.user.account, is_active=True).order_by('-created_at')[:24]
@@ -83,8 +91,6 @@ def query_update(request, visualization_id):
         query.save()
         visualization.query = query
         visualization.save()
-    if request.is_ajax():
-        return redirect(execute, visualization_id=visualization.id)
     if request.POST.get('dashboard'):
         dashboard = get_object_or_404(Dashboard, pk=request.POST.get('dashboard'), account=request.user.account)
         return redirect('dashboards_play', dashboard_slug=dashboard.slug)
@@ -118,12 +124,94 @@ def graph_update(request, visualization_id):
         return redirect('dashboards_play', dashboard_slug=dashboard.slug)
     return redirect(show, visualization_id=visualization.id)
 
+def execute_query(visualization):
+    if visualization.query:
+        job = Job(query=visualization.query, start_at=timezone.now(), query_checksum=visualization.query.checksum)
+        if visualization.account.credentials:
+            credentials = Credentials.from_json(visualization.account.credentials)
+            http_auth = credentials.authorize(httplib2.Http())
+            bigquery_service = build('bigquery', 'v2', http=http_auth)
+            try:
+                response = bigquery_service.jobs().query(projectId=visualization.account.bq_project.project_id,
+                                                         body=dict(query=visualization.query.script)).execute()
+            except HttpError as err:
+                return [err.content, None]
+            
+            job.job_id = response.get('jobReference').get('jobId')
+            job.total_rows = response.get('totalRows')
+            job.completed_at = timezone.now()
+            def replace_name(col):
+                col['name'] = col.get('name').replace('_', ' ')
+                return col
+            schema = [replace_name(col) for col in response.get('schema').get('fields')]
+            def cast_value(index, value, p=1):
+                column = schema[index]
+                column_type = column.get('type')
+                if column_type == 'INTEGER':
+                    return int((value if value else '0'))
+                elif column_type == 'FLOAT':
+                    return float(value if value else '0')
+                elif column_type == 'TIMESTAMP' and p > 1:
+                    return datetime.fromtimestamp(int(float(value))).isoformat() if value else None
+                return value
+            def change_type(t):
+                if t == 'INTEGER' or t == 'FLOAT':
+                    return 'number'
+                elif t == 'STRING':
+                    return 'string'
+                elif t == 'BOOLEAN':
+                    return 'boolean'
+                elif t == 'DATE':
+                    return 'date'
+                elif t == 'TIMESTAMP':
+                    return 'date'
+                else:
+                    return 'string'
+            rows = [[cast_value(index, value.get('v')) for index, value in enumerate(row.get('f'))] for row in response.get('rows')]
+            if visualization.query.unstack:
+                p = pd.DataFrame(rows).set_index([0,1]).unstack(-1).fillna(0)
+                matrix = p.as_matrix().tolist()
+                rows_index = p.index.values
+                columns_index = [v[1] for v in p.columns.values]
+                s = schema[0]
+                columns_index.insert(0, dict(id=s.get('name'), label=s.get('name'), type=change_type(s.get('type'))))
+                new_matrix = [columns_index]
+                for index, row in enumerate(matrix):
+                    row = [cast_value(2, c, 2) for c in row]
+                    row.insert(0, cast_value(0, rows_index[index], 2))
+                    new_matrix.append(row)
+                rows = new_matrix
+            else:
+                rows.insert(0, [dict(id=s.get('name'), label=s.get('name'), type=change_type(s.get('type'))) for s in schema])
+            now = timezone.now()
+            job.cache_key = 'jobs/' + str(now.year) + '/' + str(now.month) + '/' + str(now.day) + '/' + str(uuid.uuid4())
+            job.save_results(rows, schema)
+            if visualization.cache_for:
+                job.cache_url = job.get_results_url(visualization.cache_for)
+                job.cached_until = timezone.now() + timedelta(seconds=visualization.cache_for)
+            elif visualization.cache_until:
+                now = timezone.now()
+                new_date = pytz.timezone('Asia/Singapore').localize(datetime(now.year, now.month, now.day, visualization.cache_until.hour, visualization.cache_until.minute))
+                if new_date < now:
+                    new_date = new_date + timedelta(days=1)
+                job.cache_url = job.get_results_url((new_date-now).total_seconds())
+                job.cached_until = new_date
+            job.save()
+            return [None, job]
+    return ['No query', None]
+
 def execute(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
-    err, job = visualization.execute()
+    err = None
+    try:
+        job = Job.objects.filter(completed_at__isnull=False, query__visualization=visualization, cached_until__gte=datetime.now()).order_by('-start_at')[:1].get()
+        if job.query_checksum != job.query.checksum:
+            err, job = execute_query(visualization)
+    except Job.DoesNotExist:
+        err, job = execute_query(visualization)
     if err:
         return HttpResponse(err, 'application/json', status=404)
-    return HttpResponse(json.dumps(dict(url=job.cache_url)), 'application/json')
+    return HttpResponse(json.dumps(dict(url=job.cache_url, export_url=request.build_absolute_uri(reverse('jobs_export', kwargs=dict(job_id=job.id))))), 'application/json')
 
 def remove(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)

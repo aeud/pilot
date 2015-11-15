@@ -1,10 +1,11 @@
 from django.conf.urls import include, url
-from . import accounts, visualizations, dashboards
+from . import accounts, visualizations, dashboards, jobs
 
 urlpatterns = [
     url(r'^$', 'apps.dashboards.views.stars', name='home'),
     url(r'^account/', include(accounts)),
     url(r'^visualizations/', include(visualizations)),
+    url(r'^jobs/', include(jobs)),
     url(r'^dashboards/', include(dashboards)),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^login/google$', 'apps.accounts.views.login_google', name='login_google'),
