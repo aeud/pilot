@@ -1,5 +1,6 @@
 from django.db import models
 from apps.accounts.models import Account
+import hashlib
 
 class Query(models.Model):
     script        = models.TextField()
