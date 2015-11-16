@@ -27,6 +27,11 @@
             <div class="col-lg-2 hidden-md hidden-sm hidden-xs" id="col-nav">{% include "_layout/_nav.html" %}</div>
             <div class="col-lg-offset-2 col-lg-10" id="main-container">
                 <header id="header">
+                    {% if request.user.id %}
+                    <button id="navMobile" class="hidden-lg">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    {% endif %}
                     {% block header %}
                     <h1>{% block h1 %}{% endblock h1 %}</h1>
                     {% endblock header %}
@@ -42,6 +47,7 @@
             </div>
         </div>
     </div>
+    <div class="show-sm show-xs" id="col-nav-mobile">{% include "_layout/_nav.html" %}</div>
     {% endblock body %}
     {% block javascripts %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
