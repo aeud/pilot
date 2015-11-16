@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='job',
             name='created_by',
-            field=models.ForeignKey(default=2, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(default=3, to=settings.AUTH_USER_MODEL),
             preserve_default=False,
         ),
     ]
