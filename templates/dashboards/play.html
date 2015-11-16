@@ -82,7 +82,9 @@
                 </div>
             </div>
             <h2>{{ dashboard_entity.visualization.name }}</h2>
-            <div id="v_{{ dashboard_entity.visualization.id }}"></div>
+            <div class="overflow">
+                <div id="v_{{ dashboard_entity.visualization.id }}" style="min-width: 700px;"></div>
+            </div>
         </div>
     </div>
     {% endfor %}
