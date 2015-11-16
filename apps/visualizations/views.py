@@ -125,9 +125,9 @@ def graph_update(request, visualization_id):
         return redirect('dashboards_play', dashboard_slug=dashboard.slug)
     return redirect(show, visualization_id=visualization.id)
 
-def execute_query(visualization):
+def execute_query(request, visualization):
     if visualization.query:
-        job = Job(query=visualization.query, start_at=timezone.now(), query_checksum=visualization.query.checksum)
+        job = Job(query=visualization.query, start_at=timezone.now(), query_checksum=visualization.query.checksum, created_by=request.user)
         if visualization.account.credentials:
             credentials = Credentials.from_json(visualization.account.credentials)
             http_auth = credentials.authorize(httplib2.Http())
@@ -207,9 +207,9 @@ def execute(request, visualization_id):
     try:
         job = Job.objects.filter(completed_at__isnull=False, query__visualization=visualization, cached_until__gte=datetime.now()).order_by('-start_at')[:1].get()
         if job.query_checksum != job.query.checksum:
-            err, job = execute_query(visualization)
+            err, job = execute_query(request, visualization)
     except Job.DoesNotExist:
-        err, job = execute_query(visualization)
+        err, job = execute_query(request, visualization)
     if err:
         return HttpResponse(err, 'application/json', status=404)
     job_request = JobRequest(created_by=request.user, job=job)

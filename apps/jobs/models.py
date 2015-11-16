@@ -12,6 +12,7 @@ class Job(models.Model):
     completed_at   = models.DateTimeField()
     job_id         = models.CharField(max_length=255)
     total_rows     = models.IntegerField()
+    created_by     = models.ForeignKey(User)
     query_checksum = models.CharField(max_length=32)
     cached_until   = models.DateTimeField(null=True)
     cache_url      = models.CharField(max_length=255, null=True)
@@ -83,6 +84,11 @@ class JobExport(models.Model):
 
 class JobRequest(models.Model):
     job        = models.ForeignKey(Job)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User)
+
+class JobExportRequest(models.Model):
+    export     = models.ForeignKey(JobExport)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
 

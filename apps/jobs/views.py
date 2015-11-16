@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.http import Http404, HttpResponse
-from apps.jobs.models import Job, JobExport
+from apps.jobs.models import Job, JobExport, JobExportRequest
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 import gzip, json, csv, uuid
@@ -51,4 +51,6 @@ def export(request, job_id):
         export = JobExport.objects.get(job=job)
     except JobExport.DoesNotExist:
         export = export_job(request, job)
+    export_request = JobExportRequest(export=export, created_by=request.user)
+    export_request.save()
     return redirect(export.generate_url())
