@@ -151,7 +151,7 @@ def execute_query(visualization):
                     return int((value if value else '0'))
                 elif column_type == 'FLOAT':
                     return float(value if value else '0')
-                elif column_type == 'TIMESTAMP':
+                elif column_type == 'TIMESTAMP' and (not visualization.query.unstack or p > 1):
                     return datetime.fromtimestamp(int(float(value))).isoformat() if value else None
                 return value
             def change_type(t):
