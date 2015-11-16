@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity
 from apps.visualizations.models import Visualization
+import json, urllib
 
 def index(request):
     dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True)
@@ -103,4 +105,21 @@ def visualization_remove(request, dashboard_id, dashboard_entity_id):
     dashboard_entity = get_object_or_404(DashboardEntity, pk=dashboard_entity_id, dashboard=dashboard)
     dashboard_entity.delete()
     return redirect(play, dashboard_slug=dashboard.slug)
+
+def sort(request, dashboard_id):
+    dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
+    dashboard_entities = DashboardEntity.objects.filter(dashboard=dashboard, visualization__is_active=True).order_by('position')
+    return render(request, 'dashboards/sort.html', dict(dashboard=dashboard, dashboard_entities=dashboard_entities))
+
+@csrf_exempt
+def positions(request, dashboard_id):
+    dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
+    positions = json.loads(request.body.decode('utf-8'))
+    for row in positions:
+        entity = get_object_or_404(DashboardEntity, pk=row[1], dashboard=dashboard)
+        if entity.position != row[0]:
+            entity.position = row[0]
+            entity.save()
+    return HttpResponse(json.dumps('coucou'), 'application/json')
+
 

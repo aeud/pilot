@@ -6,7 +6,7 @@
 {% block breadcrumbs_nav %}
 <ol class="breadcrumb">
     <li><a href="{% url 'dashboards_index' %}">Dashboards</a></li>
-    <li><a href="{% url 'dashboards_show' dashboard.id %}">{{ dashboard.name }}</a></li>
+    <li><a href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard.name }}</a></li>
     <li class="active">Add visualization</li>
 </ol>
 {% endblock breadcrumbs_nav %}

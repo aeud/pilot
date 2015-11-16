@@ -81,3 +81,8 @@ class JobExport(models.Model):
             'response-content-disposition': 'attachment; filename=export.csv'
         })
 
+class JobRequest(models.Model):
+    job        = models.OneToOneField(Job)
+    created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User)
+

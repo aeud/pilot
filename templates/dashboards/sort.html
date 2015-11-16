@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Sort dashboard{% endblock title %}
+{% block h1 %}Sort {{ dashboard.name }}{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'dashboards_index' %}">Dashboards</a></li>
+    <li><a href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard.name }}</a></li>
+    <li class="active">Sort</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+<h2>Visualizations</h2>
+<div id="sortable">
+{% for dashboard_entity in dashboard_entities %}
+<div class="well dashboard-entity-container" data-id="{{ dashboard_entity.id }}">
+    {{ dashboard_entity.visualization.name }} ({{ dashboard_entity.size }})
+</div>
+{% endfor %}
+</div>
+<center><a href="{% url 'dashboards_play' dashboard.slug %}" class="btn btn-primary btn-lg">Save</a></center>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<script>
+$(function() {
+    $( "#sortable" ).sortable({
+        stop: function(event, ui){
+            var k = new Array();
+            $('.dashboard-entity-container').each(function(_i, el){
+                var el = $(el);
+                k.push(new Array(_i + 1, el.data('id')));
+            });
+            $.ajax({
+                url: '{% url 'dashboards_positions' dashboard.id %}',
+                data: JSON.stringify(k),
+                contentType: 'application/json',
+                method: 'post',
+                success: function(data){
+                    console.log(data);
+                }
+            });
+        }
+    });
+    $( "#sortable" ).disableSelection();
+});
+</script>    
+{% endblock javascripts %}

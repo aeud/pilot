@@ -3,7 +3,7 @@ from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from apps.visualizations.models import Query, Visualization, Graph
-from apps.jobs.models import Job
+from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard
 import json, pandas as pd, httplib2, hashlib, gzip, json, pytz, uuid
 from datetime import datetime, timedelta
@@ -211,6 +211,8 @@ def execute(request, visualization_id):
         err, job = execute_query(visualization)
     if err:
         return HttpResponse(err, 'application/json', status=404)
+    job_request = JobRequest(created_by=request.user, job=job)
+    job_request.save()
     return HttpResponse(json.dumps(dict(url=job.cache_url, export_url=request.build_absolute_uri(reverse('jobs_export', kwargs=dict(job_id=job.id))))), 'application/json')
 
 def remove(request, visualization_id):

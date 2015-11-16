@@ -22,6 +22,7 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="{% url 'dashboards_edit' dashboard.id %}">Edit</a></li>
             <li><a href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add a visualization</a></li>
+            <li><a href="{% url 'dashboards_sort' dashboard.id %}">Sort</a></li>
             <li role="separator" class="divider"></li>
             {% if request.user in dashboard.star_users.all %}
             <li><a href="{% url 'dashboards_unstar' dashboard.id %}">Unstar</a></li>
@@ -57,7 +58,7 @@
 {% block container %}
 <div class="row">
     {% for dashboard_entity in dashboard_entities %}
-    <div class="{{ dashboard_entity.size }}">
+    <div class="{{ dashboard_entity.size }} dashboard-entity-container" data-id="{{ dashboard_entity.id }}" data-size="{{ dashboard_entity.size }}">
         <div class="well wait chart dashboard-entity" data-url="{% url 'visualizations_execute' dashboard_entity.visualization.id %}" data-location="v_{{ dashboard_entity.visualization.id }}" data-chart="{{ dashboard_entity.visualization.graph.chart_type }}" id="w_{{ dashboard_entity.visualization.id }}">
             <div class="pull-right">
                 <div class="btn-group">
@@ -88,6 +89,22 @@
 {% block javascripts %}
 {{ block.super }}
 <script>
+var k = new Array();
+$('.dashboard-entity-container').each(function(_i, el){
+    var el = $(el);
+    k.push(new Array(_i + 1, el.data('id')));
+});
+$.ajax({
+    url: '{% url 'dashboards_positions' dashboard.id %}',
+    data: JSON.stringify(k),
+    contentType: 'application/json',
+    method: 'post',
+    success: function(data){
+        console.log(data);
+    }
+});
+</script>
+<script>
 $('.chart').prepend($('<div>').attr('class', 'spinner').append($('<div>').attr('class', 'dot1')).append($('<div>').attr('class', 'dot2')));
 google.load('visualization', '1');
 function buildDataTable(s3URL, callback){
@@ -103,7 +120,6 @@ function drawVisualization() {
     $.ajax({
         url: '{% url 'visualizations_execute' dashboard_entity.visualization.id %}',
         success: function(data){
-            console.log(data);
             buildDataTable(data.url, function(array){
                 if (array[0]) {
                     var headers = array[0];
@@ -139,7 +155,6 @@ function drawVisualization() {
                 });
                 $('#w_{{ dashboard_entity.visualization.id }}').removeClass('wait');
             });
-            console.log($('#v_{{ dashboard_entity.visualization.id }}'));
             $('#w_{{ dashboard_entity.visualization.id }}').find('ul.dropdown-menu').append($('<li>').attr('class', 'divider')).append($('<li>').append($('<a>').attr('href', data.export_url).html('Download')));
         }
     });

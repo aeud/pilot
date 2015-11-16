@@ -9,6 +9,7 @@
             <a class="{% if 'dashboards_play' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_play' dashboard.slug %}">Play</a>
             <a class="{% if 'dashboards_edit' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_edit' dashboard.id %}">Edit</a>
             <a class="{% if 'dashboards_visualizations_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add visualization</a>
+            <a class="{% if 'dashboards_sort' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_sort' dashboard.id %}">Sort</a>
         </dd>
     </dl>
     {% endif %}
@@ -43,7 +44,6 @@
             <a class="{% if 'visualizations_edit' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_edit' visualization.id %}">Edit</a>
             <a class="{% if 'visualizations_query' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_query' visualization.id %}">Query</a>
             <a class="{% if 'visualizations_graph' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_graph' visualization.id %}">Graph</a>
-            <a href="{% url 'visualizations_remove' visualization.id %}">Remove</a>
         </dd>
     </dl>
     {% endif %}

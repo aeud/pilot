@@ -6,9 +6,9 @@
 {% block breadcrumbs_nav %}
 <ol class="breadcrumb">
     <li><a href="{% url 'dashboards_index' %}">Dashboards</a></li>
-    <li><a href="{% url 'dashboards_show' dashboard.id %}">{{ dashboard.name }}</a></li>
-    <li><a href="{% url 'dashboards_show' dashboard.id %}">Visualizations</a></li>
-    <li><a href="{% url 'dashboards_show' dashboard.id %}">{{ dashboard_entity.visualization.name }}</a></li>
+    <li><a href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard.name }}</a></li>
+    <li><a href="{% url 'dashboards_play' dashboard.slug %}">Visualizations</a></li>
+    <li><a href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard_entity.visualization.name }}</a></li>
     <li class="active">Edit</li>
 </ol>
 {% endblock breadcrumbs_nav %}
