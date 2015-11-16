@@ -82,7 +82,7 @@
                 </div>
             </div>
             <h2>{{ dashboard_entity.visualization.name }}</h2>
-            <div class="overflow" style="height: 400px;">
+            <div class="overflow" style="height: 420px;">
                 <div id="v_{{ dashboard_entity.visualization.id }}" style="min-width: 500px;"></div>
             </div>
         </div>
@@ -151,7 +151,7 @@ function drawVisualization() {
                 var options = {}
                 {% endif %}
                 if (!options.width) options.width = '100%';
-                if (!options.height) options.height = 380;
+                if (!options.height) options.height = 400;
                 google.visualization.drawChart({
                     containerId: 'v_{{ dashboard_entity.visualization.id }}',
                     dataTable: google.visualization.arrayToDataTable(array),
