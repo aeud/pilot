@@ -82,7 +82,7 @@ class JobExport(models.Model):
         })
 
 class JobRequest(models.Model):
-    job        = models.OneToOneField(Job)
+    job        = models.ForeignKey(Job)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
 

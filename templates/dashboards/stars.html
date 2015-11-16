@@ -4,6 +4,16 @@
 {% block h1 %}My dashboards{% endblock h1 %}
 
 {% block container %}
+<h2><i class="material-icons">dashboard</i> Last dashboards</h2>
+<div class="row">
+    {% for dashboard in last_dashboards %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <a class="well" href="{% url 'dashboards_play' dashboard.slug %}">
+            {{ dashboard.name }}
+        </a>
+    </div>
+    {% endfor %}
+</div>
 {% if request.stars|length > 0 %}
 <h2><i class="material-icons">grade</i> Stars</h2>
 <div class="row">

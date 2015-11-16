@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Max
 from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity
 from apps.visualizations.models import Visualization
 import json, urllib
@@ -10,7 +11,9 @@ def index(request):
     return render(request, 'dashboards/index.html', dict(dashboards=dashboards))
 
 def stars(request):
-    return render(request, 'dashboards/stars.html')
+    last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at')).order_by('-request_created_at')[:8]
+    print(last_dashboards) #
+    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards))
 
 def show(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
