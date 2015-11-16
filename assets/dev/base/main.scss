@@ -20,6 +20,8 @@ $lightgreen: #00BCD4;
 $ads_col: #1DE9B6;
 $medias_col: #F06292;
 $divider_color: #ECECEC;
+$badgegreen: #69F0AE;
+$badgeamber: #FFC107;
 
 @mixin border-radius($radius) {
   -webkit-border-radius: $radius;
@@ -675,6 +677,14 @@ div.row.back {
 }
 .badge.red {
     background-color: $pink900;
+}
+.badge.badge-green {
+    background-color: $badgegreen;
+    color: #000;
+}
+.badge.badge-amber {
+    background-color: $badgeamber;
+    color: #000;
 }
 .btn-blank {
     background-color: transparent;

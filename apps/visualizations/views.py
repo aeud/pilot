@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.core.urlresolvers import reverse
+from django.db.models import Count
 from apps.visualizations.models import Query, Visualization, Graph
 from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard
@@ -13,7 +14,7 @@ from oauth2client import client
 from apiclient.discovery import build
 
 def index(request):
-    visualizations = Visualization.objects.filter(account=request.user.account, is_active=True).order_by('-created_at')[:24]
+    visualizations = Visualization.objects.filter(account=request.user.account, is_active=True).annotate(dashboards_count=Count('dashboardentity__id')).order_by('name')
     return render(request, 'visualizations/index.html', dict(visualizations=visualizations))
 
 def new(request):

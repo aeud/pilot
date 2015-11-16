@@ -7,9 +7,7 @@
 <div class="row">
     {% for dashboard in dashboards %}
     <div class="col-lg-3 col-md-4 col-sm-6">
-        <a class="well" href="{% url 'dashboards_play' dashboard.slug %}">
-            {{ dashboard.name }}
-        </a>
+        {% include "dashboards/_card.html" %}
     </div>
     {% endfor %}
 </div>

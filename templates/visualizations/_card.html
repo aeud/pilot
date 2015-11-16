@@ -1,0 +1,6 @@
+<a class="well" href="{% url 'visualizations_show' visualization.id %}">
+    <h2>{{ visualization.name }}</h2>
+    <div class="badges">
+        {% if visualization.dashboards_count %}<span class="badge badge-green">{{ visualization.dashboards_count }} dashboards</span>{% endif %}
+    </div>
+</a>

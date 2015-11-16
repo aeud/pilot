@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% block title %}All viualizations{% endblock title %}
+{% block h1 %}All viualizations{% endblock h1 %}
+
 {% block breadcrumbs_nav %}
 <div class="control pull-right">
     <div class="btn-group">
@@ -19,12 +22,10 @@
 {% endblock breadcrumbs_nav %}
 
 {% block container %}
-<div class="row">
+<div class="row resize">
     {% for visualization in visualizations %}
     <div class="col-md-4">
-        <a class="well" href="{% url 'visualizations_show' visualization.id %}">
-            {{ visualization.name }}
-        </a>
+        {% include "visualizations/_card.html" %}
     </div>
     {% endfor %}
 </div>

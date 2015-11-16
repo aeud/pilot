@@ -1,19 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Max
+from django.db.models import Max, Count
 from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity
 from apps.visualizations.models import Visualization
-import json, urllib
+import json
 
 def index(request):
-    dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True)
+    dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True).annotate(entities_count=Count('dashboardentity__id')).order_by('name')
     return render(request, 'dashboards/index.html', dict(dashboards=dashboards))
 
 def stars(request):
-    last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at')).order_by('-request_created_at')[:8]
+    last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at'), entities_count=Count('dashboardentity__id')).order_by('-request_created_at')[:8]
+    stars = Dashboard.objects.filter(star_users=request.user).annotate(entities_count=Count('dashboardentity__id')).order_by('name')
     print(last_dashboards) #
-    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards))
+    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards, stars=stars))
 
 def show(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
