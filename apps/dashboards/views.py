@@ -80,8 +80,10 @@ def visualization_new(request, dashboard_id):
         visualizations = Visualization.objects.filter(pk=request.GET.get('visualization'), account=request.user.account)
     else:
         visualizations = Visualization.objects.filter(account=request.user.account, is_active=True).order_by('name')
+    next_value = DashboardEntity.objects.filter(dashboard=dashboard).count()
     return render(request, 'dashboards/add-visualization.html', dict(dashboard=dashboard,
-                                                                     visualizations=visualizations))
+                                                                     visualizations=visualizations,
+                                                                     next_value=next_value,))
 
 def visualization_create(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
