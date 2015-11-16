@@ -22,7 +22,9 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="{% url 'dashboards_edit' dashboard.id %}">Edit</a></li>
             <li><a href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add a visualization</a></li>
+            {% if dashboard_entities|length > 1 %}
             <li><a href="{% url 'dashboards_sort' dashboard.id %}">Sort</a></li>
+            {% endif %}
             <li role="separator" class="divider"></li>
             {% if request.user in dashboard.star_users.all %}
             <li><a href="{% url 'dashboards_unstar' dashboard.id %}">Unstar</a></li>
@@ -70,6 +72,7 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                         <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit entity</a></li>
+                        <li><a href="{% url 'visualizations_show' dashboard_entity.visualization.id %}">Show visualization</a></li>
                         <li><a href="{% url 'visualizations_edit' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit visualization</a></li>
                         <li><a href="{% url 'visualizations_query' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit query</a></li>
                         <li><a href="{% url 'visualizations_graph' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit chart</a></li>

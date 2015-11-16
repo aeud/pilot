@@ -52,7 +52,7 @@ def oauth_callback(request):
     credentials = flow.step2_exchange(auth_code)
     account.credentials = credentials.to_json()
     account.save()
-    return redirect('home')
+    return redirect(bq_connect)
 
 def bq_choose_project(request):
     account = request.user.account
@@ -105,7 +105,7 @@ def login_google_callback(request):
         user.save()
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     manual_login(request, user)
-    return redirect(index)
+    return redirect('home')
 
 def aws_connect(request):
     return render(request, 'accounts/aws-credentials.html')
