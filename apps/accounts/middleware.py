@@ -16,6 +16,7 @@ class CustomAuthMiddleware(object):
 
     def process_request(self, request):
         print(request.path_info)
+        print(request.user)
         if request.user.id:
             if request.user.account:
                 request.stars = Dashboard.objects.filter(star_users=request.user).order_by('name')
