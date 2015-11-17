@@ -15,11 +15,8 @@ class CustomAuthMiddleware(object):
         self.SessionStore = engine.SessionStore
 
     def process_request(self, request):
-        print(request.COOKIES)
         if re.search('login|logout|robots\.txt|test', request.path_info):
             return None
-        print(request.path_info)
-        print(request.user)
         if request.user.id:
             if request.user.account:
                 request.stars = Dashboard.objects.filter(star_users=request.user).order_by('name')
