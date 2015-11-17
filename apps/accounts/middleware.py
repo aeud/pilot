@@ -15,7 +15,7 @@ class CustomAuthMiddleware(object):
         self.SessionStore = engine.SessionStore
 
     def process_request(self, request):
-        if re.search('login|logout|robots\.txt', request.path_info):
+        if re.search('login|logout|robots\.txt|test', request.path_info):
             return None
         print(request.path_info)
         print(request.user)

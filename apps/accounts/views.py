@@ -14,6 +14,9 @@ def index(request):
     pending_invitations = User.objects.filter(account=request.user.account)
     return render(request, 'accounts/index.html', dict(pending_invitations=pending_invitations))
 
+def test(request):
+    return redirect('home')
+
 def invite(request):
     return render(request, 'accounts/invite.html')
 
