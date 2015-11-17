@@ -15,6 +15,8 @@ class CustomAuthMiddleware(object):
         self.SessionStore = engine.SessionStore
 
     def process_request(self, request):
+        if re.search('login|logout|robots\.txt', request.path_info):
+            return None
         print(request.path_info)
         print(request.user)
         if request.user.id:
@@ -23,8 +25,7 @@ class CustomAuthMiddleware(object):
             else:
                 return render(request, 'errors/wait.html', status=403)
         else:
-            if not re.search('login|logout|robots\.txt', request.path_info):
-                return render(request, 'errors/403.html', status=403)
+            return render(request, 'errors/403.html', status=403)
         return None
 
     def process_response(self, request, response):
