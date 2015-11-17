@@ -98,11 +98,13 @@ def login_google_callback(request):
     r = requests.post(url)
     jwt = verify_id_token(r.json().get('id_token'), settings.GA_CLIENT_ID)
     email = jwt.get('email').lower()
+    print(email)
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
         user = User(email=email)
         user.save()
+    print(user)
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     manual_login(request, user)
     return redirect('home')
