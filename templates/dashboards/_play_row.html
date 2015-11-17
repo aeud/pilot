@@ -1,0 +1,35 @@
+<div class="row">
+    {% for dashboard_entity in dashboard_entities %}
+    <div class="{{ dashboard_entity.size }} dashboard-entity-container" data-id="{{ dashboard_entity.id }}" data-size="{{ dashboard_entity.size }}">
+        <div class="well wait chart dashboard-entity" data-url="{% url 'visualizations_execute' dashboard_entity.visualization.id %}" data-location="v_{{ dashboard_entity.visualization.id }}" data-chart="{{ dashboard_entity.visualization.graph.chart_type }}" id="w_{{ dashboard_entity.visualization.id }}">
+            <div class="pull-right">
+                <div class="btn-group">
+                    {% if dashboard_entity.visualization.description %}
+                    <i class="material-icons popover-icon" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{ dashboard_entity.visualization.description }}">help</i>
+                    {% endif %}
+                    <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="material-icons">more_vert</i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        {% if request.user.is_staff %}
+                        <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit entity</a></li>
+                        <li><a href="{% url 'visualizations_show' dashboard_entity.visualization.id %}">Show visualization</a></li>
+                        <li><a href="{% url 'visualizations_edit' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit visualization</a></li>
+                        <li><a href="{% url 'visualizations_query' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit query</a></li>
+                        <li><a href="{% url 'visualizations_graph' dashboard_entity.visualization.id %}?dashboard={{ dashboard.id }}">Edit chart</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'dashboards_visualizations_remove' dashboard.id dashboard_entity.id %}">Remove</a></li>
+                        {% else %}
+                        <li><a href="{% url 'visualizations_show' dashboard_entity.visualization.id %}">Show visualization</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <h2>{{ dashboard_entity.visualization.name }}</h2>
+            <div class="overflow" style="height: 420px;">
+                <div id="v_{{ dashboard_entity.visualization.id }}" style="min-width: 500px;"></div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

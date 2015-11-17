@@ -115,6 +115,12 @@ h2 {
     color: $pink700;
     margin-bottom: 20px;
 }
+.well h3 {
+    font-size: 16px;
+    font-weight: 300;
+    color: $pink700;
+    margin-bottom: 20px;
+}
 h2 .material-icons {
     margin-top: 0;
     position: relative;
@@ -605,14 +611,14 @@ div.row.back {
     overflow: hidden;
     margin-bottom: 5px;
 }
-.campaign.card .indicators {
+.indicators {
     position: absolute;
     top: 0;
     right: 0px;
     width: 30px;
     bottom: 0;
 }
-.campaign.card .indicators .indicator {
+.indicators .indicator {
     position: relative;
     left: 0;
     right: 0;
@@ -621,19 +627,19 @@ div.row.back {
     color: $white;
     padding: 3px 0 1px;
 }
-.campaign.card .indicators .indicator.i-ads {
+.indicators .indicator.i-ads {
     background-color: $ads_col;
 }
-.campaign.card .indicators .indicator.i-medias {
+.indicators .indicator.i-medias {
     background-color: $medias_col;
 }
-.campaign.card .indicators .indicator .i-icon {
+.indicators .indicator .i-icon {
     font-size: 10px;
 }
-.campaign.card .indicators .indicator .i-icon .material-icons {
+.indicators .indicator .i-icon .material-icons {
     font-size: 18px;
 }
-.campaign.card .indicators .indicator .i-metric {
+.indicators .indicator .i-metric {
     font-size: 11px;
     margin-top: -2px;
 }

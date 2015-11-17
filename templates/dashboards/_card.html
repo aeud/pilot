@@ -1,6 +1,13 @@
 <a class="well" href="{% url 'dashboards_play' dashboard.slug %}">
-    <h2>{{ dashboard.name }}</h2>
-    <div class="badges">
-        {% if dashboard.entities_count %}<span class="badge badge-green">{{ dashboard.entities_count }} visualizations</span>{% endif %}
+    <h3>{{ dashboard.name }}</h3>
+    <div class="indicators">
+        <div class="indicator i-ads" data-toggle="tooltip" data-placement="top" title="Visualizations">
+            <div class="i-icon">
+                <i class="material-icons">insert_chart</i>
+            </div>
+            <div class="i-metric">
+                {{ dashboard.entities_count }}
+            </div>
+        </div>
     </div>
 </a>

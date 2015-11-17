@@ -9,6 +9,7 @@
 {% block h1 %}{{ visualization.name }}{% endblock h1 %}
 
 {% block breadcrumbs_nav %}
+{% if request.user.is_staff %}
 <div class="control pull-right">
     <div class="btn-group">
         <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -22,6 +23,7 @@
         </ul>
     </div>
 </div>
+{% endif %}
 <ol class="breadcrumb">
     <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
     <li class="active">{{ visualization.name }}</li>
@@ -29,13 +31,6 @@
 {% endblock breadcrumbs_nav %}
 
 {% block container %}
-{% comment %}
-{% if visualization.description %}
-<div class="visualization-description">
-    <div class="description-md">{{ visualization.description }}</div>
-</div>
-{% endif %}
-{% endcomment %}
 {% if relative_dashboards|length > 0 %}
 <h2>Dashboards</h2>
 <div class="row">

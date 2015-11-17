@@ -7,9 +7,16 @@
         </dt>
         <dd class="{% if 'dashboards_' in request.resolver_match.url_name %}active{% endif %} nav-dashboard">
             <a class="{% if 'dashboards_play' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_play' dashboard.slug %}">Play</a>
+            {% if request.user in dashboard.star_users.all %}
+            <a href="{% url 'dashboards_unstar' dashboard.id %}">Unstar</a>
+            {% else %}
+            <a href="{% url 'dashboards_star' dashboard.id %}">Star</a>
+            {% endif %}
+            {% if request.user.is_staff %}
             <a class="{% if 'dashboards_edit' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_edit' dashboard.id %}">Edit</a>
             <a class="{% if 'dashboards_visualizations_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add visualization</a>
             <a class="{% if 'dashboards_sort' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_sort' dashboard.id %}">Sort</a>
+            {% endif %}
         </dd>
     </dl>
     {% endif %}
@@ -31,7 +38,9 @@
         </dt>
         <dd class="{% if not dashboard and 'dashboards_' in request.resolver_match.url_name %}active{% endif %} nav-dashboards">
             <a class="{% if 'dashboards_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_index' %}">Library</a>
+            {% if request.user.is_staff %}
             <a class="{% if 'dashboards_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'dashboards_new' %}">New</a>
+            {% endif %}
         </dd>
     </dl>
     {% if visualization %}
@@ -41,9 +50,11 @@
         </dt>
         <dd class="active nav-visualization">
             <a class="{% if 'visualizations_show' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_show' visualization.id %}">Show</a>
+            {% if request.user.is_staff %}
             <a class="{% if 'visualizations_edit' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_edit' visualization.id %}">Edit</a>
             <a class="{% if 'visualizations_query' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_query' visualization.id %}">Query</a>
             <a class="{% if 'visualizations_graph' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_graph' visualization.id %}">Graph</a>
+            {% endif %}
         </dd>
     </dl>
     {% endif %}
@@ -53,7 +64,9 @@
         </dt>
         <dd class="{% if not visualization and 'visualizations_' in request.resolver_match.url_name %}active{% endif %} nav-visualizations">
             <a class="{% if 'visualizations_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_index' %}">View all</a>
+            {% if request.user.is_staff %}
             <a class="{% if 'visualizations_new' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'visualizations_new' %}">New</a>
+            {% endif %}
         </dd>
     </dl>
     <dl>
