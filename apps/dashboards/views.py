@@ -11,7 +11,6 @@ def index(request):
     return render(request, 'dashboards/index.html', dict(dashboards=dashboards))
 
 def stars(request):
-    print(request.COOKIES)
     last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at'), entities_count=Count('dashboardentity__id', distinct=True)).order_by('-request_created_at')[:8]
     stars = Dashboard.objects.filter(star_users=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
     return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards, stars=stars))
