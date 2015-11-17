@@ -11,6 +11,8 @@ ALLOWED_HOSTS = []
 
 SESSION_COOKIE_NAME = 'colsessionid'
 SESSION_COOKIE_DOMAIN = None
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 
 # Application definition
