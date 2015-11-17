@@ -7,12 +7,12 @@ from apps.visualizations.models import Visualization
 import json
 
 def index(request):
-    dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True).annotate(entities_count=Count('dashboardentity__id')).order_by('name')
+    dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
     return render(request, 'dashboards/index.html', dict(dashboards=dashboards))
 
 def stars(request):
-    last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at'), entities_count=Count('dashboardentity__id')).order_by('-request_created_at')[:8]
-    stars = Dashboard.objects.filter(star_users=request.user).annotate(entities_count=Count('dashboardentity__id')).order_by('name')
+    last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at'), entities_count=Count('dashboardentity__id', distinct=True)).order_by('-request_created_at')[:8]
+    stars = Dashboard.objects.filter(star_users=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
     print(last_dashboards) #
     return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards, stars=stars))
 
