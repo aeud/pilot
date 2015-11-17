@@ -109,7 +109,7 @@ def login_google_callback(request):
         user.save()
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     manual_login(request, user)
-    return redirect('home')
+    return redirect(index)
 
 def aws_connect(request):
     return render(request, 'accounts/aws-credentials.html')
