@@ -78,6 +78,7 @@ def bq_remove_project(request):
     return redirect(bq_connect)
 
 def login_google(request):
+    print(request.build_absolute_uri(reverse('login_google_callback')))
     url = 'https://accounts.google.com/o/oauth2/auth?client_id='
     url += settings.GA_CLIENT_ID
     url += '&response_type=code&max_auth_age=0&scope=openid email&redirect_uri='
