@@ -10,6 +10,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SESSION_COOKIE_NAME = 'colsessionid'
+SESSION_COOKIE_DOMAIN = '.luxola.com'
 
 
 # Application definition
