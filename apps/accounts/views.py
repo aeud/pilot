@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.http import Http404, HttpResponse
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth import login as manual_login
@@ -110,7 +111,7 @@ def login_google_callback(request):
     user.backend = 'django.contrib.auth.backends.ModelBackend'
     manual_login(request, user)
     print(request.user)
-    return redirect(index)
+    return HttpResponse('Done')
 
 def aws_connect(request):
     return render(request, 'accounts/aws-credentials.html')
