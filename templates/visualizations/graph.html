@@ -13,9 +13,6 @@
 
 {% block container %}
 <div class="well">
-    <div id="table_div" style="width: 500px; height: 500px"></div>
-</div>
-<div class="well">
     <h2>New query</h2>
     <form class="form-horizontal" action="{% url 'visualizations_graph_update' visualization.id %}" method="post">
         {% csrf_token %}
@@ -42,6 +39,16 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="inputOptionsIsStacked" class="col-sm-2 control-label">Is stacked</label>
+            <div class="col-sm-10">
+                <select class="form-control" id="inputOptionsIsStacked" name="options_is_stacked">
+                    <option value="false" {% if visualization.graph.options_is_stacked == 'false' %}selected{% endif %}>False</option>
+                    <option value="true" {% if visualization.graph.options_is_stacked == 'true' %}selected{% endif %}>True</option>
+                    <option value="percent" {% if visualization.graph.options_is_stacked == 'percent' %}selected{% endif %}>Normalize</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="inputMap" class="col-sm-2 control-label">Map Script</label>
             <div class="col-sm-10">
                 <textarea class="form-control" id="inputMap" name="map_script">{{ visualization.graph.map_script|default:'' }}</textarea>
@@ -53,6 +60,9 @@
             </div>
         </div>
     </form>
+</div>
+<div class="well">
+    <div id="table_div" style="width: 500px; height: 500px"></div>
 </div>
 {% endblock container %}
 

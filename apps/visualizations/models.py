@@ -22,9 +22,10 @@ class Query(models.Model):
         return super(Query, self).save(*args, **kwargs)
 
 class Graph(models.Model):
-    options       = models.TextField()
-    chart_type    = models.CharField(max_length=255)
-    map_script    = models.TextField(null=True)
+    options            = models.TextField()
+    chart_type         = models.CharField(max_length=255)
+    map_script         = models.TextField(null=True)
+    options_is_stacked = models.CharField(max_length=255, null=True)
 
     def to_dict(self):
         return dict(options=self.options,
