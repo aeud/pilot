@@ -105,7 +105,8 @@ function execute(el){
                     });
                 }
                 var options = {}
-                if (el.data('options-isstacked')) options.isStacked = el.data('options-isstacked');
+                if (el.data('options') && typeof el.data('options') == 'object') options = el.data('options');
+                if (!options.isStacked && el.data('options-isstacked')) options.isStacked = el.data('options-isstacked');
                 if (!options.width) options.width = '100%';
                 if (!options.height) options.height = 400;
                 google.visualization.drawChart({
