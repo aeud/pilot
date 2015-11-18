@@ -226,28 +226,12 @@ def remove(request, visualization_id):
 
 def duplicate(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
-    new_visualization = Visualization(name='Copy of ' + visualization.name,
-                                      description=visualization.description,
-                                      account=visualization.account,
-                                      cache_for=visualization.cache_for,
-                                      cache_until=visualization.cache_until)
-    if visualization.query:
-        new_query = Query(script=visualization.query.script, unstack=visualization.query.unstack)
-        new_query.save()
-        new_visualization.query = new_query
-
-    if visualization.graph:
-        new_graph = Graph(options=visualization.graph.options,
-                          chart_type=visualization.graph.chart_type,
-                          map_script=visualization.graph.map_script)
-        new_graph.save()
-        new_visualization.graph = new_graph
-    new_visualization.save()
+    new_visualization = Visualization.duplicate(visualization)
     return redirect(edit, visualization_id=new_visualization.id)
 
 def v_export(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
-    response = HttpResponse(json.dumps([visualization.to_dict()]), 'application/json')
+    response = HttpResponse(json.dumps([visualization.to_dict()], sort_keys=True, indent=4), 'application/json')
     response['Content-Disposition'] = 'attachment; filename="visualization_' + str(visualization.id) + '.json"'
     return response
 
@@ -263,22 +247,7 @@ def v_import(request):
 def v_import_post(request):
     array = json.loads(request.POST.get('file'))
     for v in array:
-        visualization = Visualization(name=v.get('name'),
-                                      description=v.get('description'),
-                                      account=request.user.account,
-                                      cache_for=v.get('cache_for'),
-                                      cache_until=v.get('cache_until'),)
-        if v.get('query'):
-            query = Query(script=v.get('query').get('script'),
-                          unstack=v.get('query').get('unstack'),)
-            query.save()
-            visualization.query = query
-        if v.get('graph'):
-            graph = Graph(options=v.get('graph').get('options'),
-                          chart_type=v.get('graph').get('chart_type'),
-                          map_script=v.get('graph').get('map_script'),)
-            graph.save()
-            visualization.graph = graph
-
-        visualization.save()
+        visualization = Visualization.new_from_dict(request, v)
+    if len(array) == 1:
+        return redirect(show, visualization_id=visualization.id)
     return redirect(index)

@@ -1,6 +1,7 @@
 from django.db import models
 from apps.visualizations.models import Visualization
 from apps.accounts.models import Account, User
+import uuid
 
 class Dashboard(models.Model):
     account    = models.ForeignKey(Account)
@@ -20,6 +21,20 @@ class Dashboard(models.Model):
                     slug=self.slug,
                     entities=[entity.to_dict() for entity in dashboard_entities],)
 
+    def new_from_dict(request, d):
+        try:
+            Dashboard(name=d.get('name'), slug=d.get('slug'), account=request.user.account)
+            slug = d.get('slug') + '-' + str(uuid.uuid1())
+        except Dashboard.DoesNotExist:
+            slug = d.get('slug')
+        dashboard = Dashboard(name=d.get('name'),
+                              slug=slug,
+                              account=request.user.account,)
+        dashboard.save()
+        for e in d.get('entities'):
+            DashboardEntity.new_from_dict(request, dashboard, e)
+        return dashboard
+
 class DashboardEntity(models.Model):
     dashboard      = models.ForeignKey(Dashboard)
     position       = models.IntegerField()
@@ -32,6 +47,14 @@ class DashboardEntity(models.Model):
         return dict(position=self.position,
                     size=self.size,
                     visualization=self.visualization.to_dict(),)
+
+    def new_from_dict(request, dashboard, e):
+        entity = DashboardEntity(size=e.get('size'),
+                                 position=e.get('position'),
+                                 dashboard=dashboard,
+                                 visualization=Visualization.new_from_dict(request, e.get('visualization')))
+        entity.save()
+        return entity
 
 class DashboardRedirection(models.Model):
     account        = models.ForeignKey(Account)
