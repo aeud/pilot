@@ -24,7 +24,9 @@ class CustomAuthMiddleware(object):
             else:
                 return render(request, 'errors/wait.html', status=403)
         else:
-            return render(request, 'errors/403.html', status=403)
+            response = render(request, 'errors/403.html', status=403)
+            response.set_cookie('bounceClientVisit1015', 'value', max_age=0, expires=0, domain='.luxola.com')
+            return response
         return None
 
     def process_response(self, request, response):
