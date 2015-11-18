@@ -201,7 +201,7 @@ def execute_query(request, visualization):
                 if new_date < now:
                     new_date = new_date + timedelta(days=1)
                 job.cache_url = job.get_results_url((new_date-now).total_seconds())
-                job.cached_until = new_date
+                job.cached_until = pytz.timezone('Asia/Singapore').localize(new_date)
             job.save()
             return [None, job]
     return ['No query', None]
