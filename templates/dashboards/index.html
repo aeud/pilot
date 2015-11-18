@@ -3,6 +3,26 @@
 {% block title %}Dashboards library{% endblock title %}
 {% block h1 %}Library{% endblock h1 %}
 
+{% block breadcrumbs_nav %}
+{% if request.user.is_staff %}
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            {% if request.user.is_staff %}
+            <li><a href="{% url 'dashboards_import' %}">Import</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+<ol class="breadcrumb">
+    <li class="active">Dashboards</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
 {% block container %}
 <div class="row">
     {% for dashboard in dashboards %}

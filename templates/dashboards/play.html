@@ -22,7 +22,11 @@
             <li><a href="{% url 'dashboards_visualizations_new' dashboard.id %}">Add a visualization</a></li>
             {% if dashboard_entities|length > 1 %}
             <li><a href="{% url 'dashboards_sort' dashboard.id %}">Sort</a></li>
+            <li><a href="{% url 'dashboards_export' dashboard.id %}">Export</a></li>
             {% endif %}
+            <li role="separator" class="divider"></li>
+            <li><a href="{% url 'dashboards_remove' dashboard.id %}">Delete</a></li>
+            <li><a href="{% url 'dashboards_hard_remove' dashboard.id %}">Delete with visualizations</a></li>
             <li role="separator" class="divider"></li>
             {% endif %}
             {% if request.user in dashboard.star_users.all %}

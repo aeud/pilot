@@ -3,8 +3,8 @@ from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max, Count
 from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity
-from apps.visualizations.models import Visualization
-import json
+from apps.visualizations.models import Visualization, Query, Graph
+import json, uuid
 
 def index(request):
     dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
@@ -59,6 +59,17 @@ def remove(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
     dashboard.is_active = False
     dashboard.save()
+    return redirect(index)
+
+def hard_remove(request, dashboard_id):
+    dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
+    dashboard_entities = DashboardEntity.objects.filter(dashboard=dashboard, visualization__is_active=True).order_by('position')
+    dashboard.is_active = False
+    dashboard.save()
+    for entity in dashboard_entities:
+        v = entity.visualization
+        v.is_active = False
+        v.save()
     return redirect(index)
 
 def star(request, dashboard_id):
@@ -127,4 +138,47 @@ def positions(request, dashboard_id):
             entity.save()
     return HttpResponse(json.dumps('coucou'), 'application/json')
 
+def d_export(request, dashboard_id):
+    dashboard = get_object_or_404(Dashboard, id=dashboard_id, account=request.user.account)
+    response = HttpResponse(json.dumps(dict(dashboard=dashboard.to_dict()), sort_keys=True, indent=4), 'application/json')
+    response['Content-Disposition'] = 'attachment; filename="dashboard_' + str(dashboard.id) + '.json"'
+    return response
+
+def d_import(request):
+    return render(request, 'dashboards/import.html')
+
+def d_import_post(request):
+    account = request.user.account
+    d = json.loads(request.POST.get('file'))
+    d_dashboard = d.get('dashboard')
+    try:
+        Dashboard(name=d_dashboard.get('name'), slug=d_dashboard.get('slug'), account=account)
+        slug = d_dashboard.get('slug') + '-' + str(uuid.uuid1())
+    except Dashboard.DoesNotExist:
+        slug = d_dashboard.get('slug')
+    print(slug)
+    dashboard = Dashboard(name=d_dashboard.get('name'), slug=slug, account=account)
+    dashboard.save()
+    for e in d_dashboard.get('entities'):
+        v = e.get('visualization')
+        visualization = Visualization(name=v.get('name'),
+                                      description=v.get('description'),
+                                      account=request.user.account,
+                                      cache_for=v.get('cache_for'),
+                                      cache_until=v.get('cache_until'),)
+        if v.get('query'):
+            query = Query(script=v.get('query').get('script'),
+                          unstack=v.get('query').get('unstack'),)
+            query.save()
+            visualization.query = query
+        if v.get('graph'):
+            graph = Graph(options=v.get('graph').get('options'),
+                          chart_type=v.get('graph').get('chart_type'),
+                          map_script=v.get('graph').get('map_script'),)
+            graph.save()
+            visualization.graph = graph
+        visualization.save()
+        entity = DashboardEntity(dashboard=dashboard, size=e.get('size'), position=e.get('position'), visualization=visualization)
+        entity.save()
+    return redirect(play, dashboard_slug=dashboard.slug)
 
