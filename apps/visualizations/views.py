@@ -111,12 +111,14 @@ def graph_update(request, visualization_id):
         graph.options = request.POST.get('options')
         graph.chart_type = request.POST.get('chart_type')
         graph.map_script = request.POST.get('map_script')
+        graph.options_is_stacked = request.POST.get('options_is_stacked')
         graph.save()
     else:
         graph = Graph()
         graph.options = request.POST.get('options')
         graph.chart_type = request.POST.get('chart_type')
         graph.map_script = request.POST.get('map_script')
+        graph.options_is_stacked = request.POST.get('options_is_stacked')
         graph.save()
         visualization.graph = graph
         visualization.save()

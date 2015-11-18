@@ -25,7 +25,7 @@ class Graph(models.Model):
     options            = models.TextField()
     chart_type         = models.CharField(max_length=255)
     map_script         = models.TextField(null=True)
-    options_is_stacked = models.CharField(max_length=255, null=True)
+    options_is_stacked = models.CharField(max_length=255)
 
     def to_dict(self):
         return dict(options=self.options,

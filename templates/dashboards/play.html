@@ -105,8 +105,7 @@ function execute(el){
                     });
                 }
                 var options = {}
-                console.log(el.data('options'));
-                console.log(el.data('options') ? JSON.parse(el.data('options')) : '');
+                if (el.data('options-isstacked')) options.isStacked = el.data('options-isstacked');
                 if (!options.width) options.width = '100%';
                 if (!options.height) options.height = 400;
                 google.visualization.drawChart({
