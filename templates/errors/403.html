@@ -5,8 +5,7 @@
 
 {% block container %}
 {% if request.user %}
-{{ request.user }}<br>
-{{ request.session.session_key }} <br>
+{{ request.path }} <br>
 {% endif %}
 <a href="{% url 'login_google' %}">Connect</a>
 {% endblock container %}

@@ -72,3 +72,8 @@ class User(AbstractBaseUser):
 
     def __unicode__(self):
         return self.first_name if self.first_name is not None else self.email
+
+class UserConnection(models.Model):
+    user = models.ForeignKey(User, null=True)
+    token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    referrer_path = models.CharField(max_length=255, null=True)

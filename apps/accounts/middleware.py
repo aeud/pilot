@@ -15,7 +15,6 @@ class CustomAuthMiddleware(object):
         self.SessionStore = engine.SessionStore
 
     def process_request(self, request):
-        print(request.COOKIES)
         if re.search('login|logout|robots\.txt|test', request.path_info):
             return None
         if request.user.id:

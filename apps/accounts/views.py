@@ -8,7 +8,7 @@ from oauth2client.client import OAuth2Credentials as Credentials
 from oauth2client.client import verify_id_token
 from apiclient.discovery import build
 import httplib2, functools, hashlib, uuid, gzip, json, requests
-from apps.accounts.models import Account, BigQueryProject, User
+from apps.accounts.models import Account, BigQueryProject, User, UserConnection
 
 
 def index(request):
@@ -82,12 +82,15 @@ def bq_remove_project(request):
     return redirect(bq_connect)
 
 def login_google(request):
+    print(request.META.get('HTTP_REFERER'))
     #print(request.build_absolute_uri(reverse('login_google_callback')))
+    connection = UserConnection(referrer_path=request.META.get('HTTP_REFERER'))
+    connection.save()
     url = 'https://accounts.google.com/o/oauth2/auth?client_id='
     url += settings.GA_CLIENT_ID
     url += '&response_type=code&max_auth_age=0&scope=openid email&redirect_uri='
     url += request.build_absolute_uri(reverse('login_google_callback'))
-    url += '&state=toto'
+    url += '&state=' + str(connection.token)
     return redirect(url)
 
 def login_google_callback(request):
@@ -103,14 +106,20 @@ def login_google_callback(request):
     r = requests.post(url)
     jwt = verify_id_token(r.json().get('id_token'), settings.GA_CLIENT_ID)
     email = jwt.get('email').lower()
+    print(jwt)
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
         user = User(email=email)
         user.save()
     user.backend = 'django.contrib.auth.backends.ModelBackend'
+    try:
+        connection = UserConnection.objects.get(token=request.GET.get('state'), user__isnull=True)
+    except UserConnection.DoesNotExist:
+        return redirect('home')
     manual_login(request, user)
-    print(request.user)
+    connection.user = user
+    connection.save()
     return redirect('home')
 
 def aws_connect(request):
