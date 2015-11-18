@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count
 from apps.visualizations.models import Query, Visualization, Graph
 from apps.jobs.models import Job, JobRequest
-from apps.dashboards.models import Dashboard
+from apps.dashboards.models import Dashboard, DashboardEntity
 import json, pandas as pd, httplib2, hashlib, gzip, json, pytz, uuid
 from datetime import datetime, timedelta
 from oauth2client.client import OAuth2Credentials as Credentials
@@ -43,7 +43,10 @@ def show(request, visualization_id):
     if not visualization.graph:
         return redirect(graph, visualization_id=visualization.id)
     relative_dashboards = Dashboard.objects.filter(dashboardentity__visualization=visualization)
-    return render(request, 'visualizations/show.html', dict(visualization=visualization, relative_dashboards=relative_dashboards))
+    all_dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True).order_by('name')
+    return render(request, 'visualizations/show.html', dict(visualization=visualization,
+                                                            relative_dashboards=relative_dashboards,
+                                                            all_dashboards=all_dashboards))
 
 def edit(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
@@ -251,3 +254,16 @@ def v_import_post(request):
     if len(array) == 1:
         return redirect(show, visualization_id=visualization.id)
     return redirect(index)
+
+def quick_add_to_dashboard(request, visualization_id, dashboard_id):
+    visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
+    try:
+        entity = DashboardEntity.objects.filter(dashboard=dashboard, visualization=visualization)[:1].get()
+    except DashboardEntity.DoesNotExist:
+        next_value = DashboardEntity.objects.filter(dashboard=dashboard).count() + 1
+        entity = DashboardEntity(dashboard=dashboard, visualization=visualization, position=next_value, size='col-md-6 col-lg-6')
+        entity.save()
+    return redirect('dashboards_visualizations_edit', dashboard_id=dashboard.id, dashboard_entity_id=entity.id)
+    
+

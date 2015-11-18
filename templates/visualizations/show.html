@@ -26,6 +26,18 @@
         </ul>
     </div>
 </div>
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">link</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            {% for dashboard in all_dashboards %}
+            <li><a href="{% url 'visualizations_quick_add_to_dashboard' visualization.id dashboard.id %}">{{ dashboard.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
 {% endif %}
 <ol class="breadcrumb">
     <li><a href="{% url 'visualizations_index' %}">Visualizations</a></li>
