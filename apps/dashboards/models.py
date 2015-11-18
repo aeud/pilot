@@ -59,5 +59,5 @@ class DashboardEntity(models.Model):
 class DashboardRedirection(models.Model):
     account        = models.ForeignKey(Account)
     dashboard      = models.ForeignKey(Dashboard)
-    slug           = models.CharField(max_length=32, unique=True)
+    slug           = models.CharField(max_length=255, unique=True)
     created_at     = models.DateTimeField(auto_now_add=True)
