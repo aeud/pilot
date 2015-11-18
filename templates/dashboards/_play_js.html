@@ -1,0 +1,84 @@
+<script>
+$('.chart').prepend($('<div>').attr('class', 'spinner').append($('<div>').attr('class', 'dot1')).append($('<div>').attr('class', 'dot2')));
+google.load('visualization', '1');
+function buildDataTable(s3URL, callback){
+    $.ajax({
+        url: s3URL,
+        success: function(data){
+            callback(data.rows);
+        }
+    });
+}
+function execute(el){
+    $.ajax({
+        url: el.data('url'),
+        success: function(data){
+            buildDataTable(data.url, function(array){
+                if (array[0]) {
+                    var headers = array[0];
+                    headers.forEach(function(h, _i){
+                        if (typeof h == 'object' && h.type && h.type == 'date') {
+                            array.forEach(function(row, _j){
+                                if (_j > 0) {
+                                    if (typeof array[_j][_i] == 'object') {
+                                        array[_j][_i].v = new Date(array[_j][_i].v);
+                                    } else {
+                                        array[_j][_i] = new Date(array[_j][_i]);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+                var options = {}
+                if (el.data('options') && typeof el.data('options') == 'object') options = el.data('options');
+                if (!options.isStacked && el.data('options-isstacked')) options.isStacked = el.data('options-isstacked');
+                if (!options.width) options.width = '100%';
+                if (!options.height) options.height = 400;
+                google.visualization.drawChart({
+                    containerId: el.data('location'),
+                    dataTable: google.visualization.arrayToDataTable(array),
+                    chartType: el.data('chart'),
+                    options: options
+                });
+                el.removeClass('wait');
+                if ($('#table_div').length > 0) google.visualization.drawChart({
+                    containerId: 'table_div',
+                    dataTable: google.visualization.arrayToDataTable(array),
+                    chartType: 'Table',
+                    options: { width: '100%', }
+                });
+            });
+            el.find('ul.dropdown-menu').append($('<li>').attr('class', 'divider')).append($('<li>').append($('<a>').attr('href', data.export_url).html('Download')));
+        }
+    });
+}
+function drawVisualization() {
+    var _i = 0;
+    var top = $(window).scrollTop();
+    var bottom = $(window).scrollTop() + $(window).height();
+    var map = $('.dashboard-entity-container').map(function(_i, el){
+        var el = $(el);
+        return {
+            top: el.offset().top,
+            bottom: el.offset().top + el.height(),
+            el: el,
+            loading: false,
+            index: _i++
+        }
+    }).toArray();
+    function processScroll() {
+        var top = $(this).scrollTop();
+        var bottom = $(this).scrollTop() + $(this).height();
+        map.filter(function(d){ return !d.loading; }).forEach(function(d){
+            if (d.bottom >= top && d.top <= bottom) {
+                map[d.index].loading = true;
+                execute(d.el);
+            }
+        });
+    }
+    $(window).scroll(processScroll);
+    processScroll();
+}
+google.setOnLoadCallback(drawVisualization);
+</script>

@@ -1,0 +1,33 @@
+<div class="{{ size }} dashboard-entity-container" data-size="{{ size }}" data-url="{% url 'visualizations_execute' visualization.id %}" data-location="v_{{ visualization.id }}" data-chart="{{ visualization.graph.chart_type }}" id="w_{{ visualization.id }}" data-options-isstacked={{ visualization.graph.options_is_stacked }} data-options="{{ visualization.graph.options|escape }}">
+    <div class="well wait chart dashboard-entity">
+        <div class="pull-right">
+            <div class="btn-group">
+                {% if visualization.description %}
+                <i class="material-icons popover-icon" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{ visualization.description }}">help</i>
+                {% endif %}
+                <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">more_vert</i>
+                </button>
+                {% if dashboard %}
+                <ul class="dropdown-menu dropdown-menu-right">
+                    {% if request.user.is_staff %}
+                    <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit entity</a></li>
+                    <li><a href="{% url 'visualizations_show' visualization.id %}">Show visualization</a></li>
+                    <li><a href="{% url 'visualizations_edit' visualization.id %}?dashboard={{ dashboard.id }}">Edit visualization</a></li>
+                    <li><a href="{% url 'visualizations_query' visualization.id %}?dashboard={{ dashboard.id }}">Edit query</a></li>
+                    <li><a href="{% url 'visualizations_graph' visualization.id %}?dashboard={{ dashboard.id }}">Edit chart</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="{% url 'dashboards_visualizations_remove' dashboard.id dashboard_entity.id %}">Remove</a></li>
+                    {% else %}
+                    <li><a href="{% url 'visualizations_show' visualization.id %}">Show visualization</a></li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+        <h2>{{ visualization.name }}</h2>
+        <div class="overflow" style="height: 420px;">
+            <div id="v_{{ visualization.id }}" style="min-width: 500px;"></div>
+        </div>
+    </div>
+</div>

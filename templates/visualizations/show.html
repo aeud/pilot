@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 
+{% load pipeline %}
+
 {% block stylesheets %}
 {{ block.super }}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">   
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
+{% stylesheet 'dashboards_play' %}
 {% endblock stylesheets %}
 
 {% block title %}Visualization • {{ visualization.name }}{% endblock title %}
@@ -43,17 +46,14 @@
 {% endif %}
 <div class="row">
     <div class="col-md-6">
-        <div class="well">
+        <div class="well chart dashboard-entity">
             <h2>Table</h2>
-            <div id="table_div"></div>
+            <div class="overflow" style="height: 420px;">
+                <div id="table_div"></div>
+            </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="well">
-            <h2>Graph</h2>
-            <div id="visualization_div"></div>
-        </div>
-    </div>
+    {% include "visualizations/_play.html" with size='col-md-6' %}
 </div>
 <div class="row">
     <div class="col-md-12">
@@ -77,72 +77,5 @@
 
 {% block javascripts %}
 {{ block.super }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/languages/sql.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/languages/javascript.min.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-<script type='text/javascript'>
-google.load('visualization', '1');
-google.load("visualization", "1.1", {packages:["calendar"]});
-function buildDataTable(s3URL, callback){
-    $.ajax({
-        url: s3URL,
-        success: function(data){
-            callback(data.rows);
-        }
-    });
-}
-function drawVisualization() {
-    $.ajax({
-        url: '{% url 'visualizations_execute' visualization.id %}',
-        success: function(data){
-            buildDataTable(data.url, function(array){
-                if (array[0]) {
-                    var headers = array[0];
-                    headers.forEach(function(h, _i){
-                        if (typeof h == 'object' && h.type && h.type == 'date') {
-                            array.forEach(function(row, _j){
-                                if (_j > 0) {
-                                    if (_j > 0) {
-                                        if (typeof array[_j][_i] == 'object') {
-                                            array[_j][_i].v = new Date(array[_j][_i].v);
-                                        } else {
-                                            array[_j][_i] = new Date(array[_j][_i]);
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-                {% if visualization.graph.map_script %}
-                array = ({{ visualization.graph.map_script|safe }})(array);
-                {% endif %}
-                {% if visualization.graph.options %}
-                var options = {{ visualization.graph.options|safe }};
-                {% else %}
-                var options = {}
-                {% endif %}
-                if (!options.width) options.width = '100%';
-                if (!options.height) options.height = 400;
-                google.visualization.drawChart({
-                    containerId: 'visualization_div',
-                    dataTable: google.visualization.arrayToDataTable(array),
-                    chartType: '{{ visualization.graph.chart_type }}',
-                    options: options
-                });
-                google.visualization.drawChart({
-                    containerId: 'table_div',
-                    dataTable: google.visualization.arrayToDataTable(array),
-                    chartType: 'Table',
-                    options: {
-                        height: 400, width: '100%'
-                    }
-                });
-            });
-        }
-    });
-}
-google.setOnLoadCallback(drawVisualization);
-</script>
+{% include "dashboards/_play_js.html" %}
 {% endblock javascripts %}

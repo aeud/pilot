@@ -19,6 +19,7 @@ header .star a:hover .material-icons.hover {
 .well.chart {
     height: 480px;
     position: relative;
+    overflow: hidden;
 }
 .spinner {
     display: none;
