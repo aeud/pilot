@@ -1,7 +1,7 @@
 <div class="row">
     {% for dashboard_entity in dashboard_entities %}
-    <div class="{{ dashboard_entity.size }} dashboard-entity-container" data-id="{{ dashboard_entity.id }}" data-size="{{ dashboard_entity.size }}">
-        <div class="well wait chart dashboard-entity" data-url="{% url 'visualizations_execute' dashboard_entity.visualization.id %}" data-location="v_{{ dashboard_entity.visualization.id }}" data-chart="{{ dashboard_entity.visualization.graph.chart_type }}" id="w_{{ dashboard_entity.visualization.id }}">
+    <div class="{{ dashboard_entity.size }} dashboard-entity-container" data-id="{{ dashboard_entity.id }}" data-size="{{ dashboard_entity.size }}" data-url="{% url 'visualizations_execute' dashboard_entity.visualization.id %}" data-location="v_{{ dashboard_entity.visualization.id }}" data-chart="{{ dashboard_entity.visualization.graph.chart_type }}" id="w_{{ dashboard_entity.visualization.id }}">
+        <div class="well wait chart dashboard-entity">
             <div class="pull-right">
                 <div class="btn-group">
                     {% if dashboard_entity.visualization.description %}
