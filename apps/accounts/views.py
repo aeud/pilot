@@ -106,7 +106,6 @@ def login_google_callback(request):
     r = requests.post(url)
     jwt = verify_id_token(r.json().get('id_token'), settings.GA_CLIENT_ID)
     email = jwt.get('email').lower()
-    print(jwt)
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
@@ -120,6 +119,8 @@ def login_google_callback(request):
     manual_login(request, user)
     connection.user = user
     connection.save()
+    if connection.referrer_path:
+        return redirect(connection.referrer_path)
     return redirect('home')
 
 def aws_connect(request):

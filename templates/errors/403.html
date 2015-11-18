@@ -4,8 +4,5 @@
 {% block h1 %}Login{% endblock h1 %}
 
 {% block container %}
-{% if request.user %}
-{{ request.path }} <br>
-{% endif %}
 <a href="{% url 'login_google' %}">Connect</a>
 {% endblock container %}
