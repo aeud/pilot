@@ -201,7 +201,7 @@ def execute_query(request, visualization):
                 if new_date < now:
                     new_date = new_date + timedelta(days=1)
                 job.cache_url = job.get_results_url((new_date-now).total_seconds())
-                job.cached_until = pytz.timezone('Asia/Singapore').localize(new_date)
+                job.cached_until = new_date
             job.save()
             return [None, job]
     return ['No query', None]
@@ -210,7 +210,7 @@ def execute(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
     err = None
     try:
-        job = Job.objects.filter(completed_at__isnull=False, query__visualization=visualization, cached_until__gte=datetime.now()).order_by('-start_at')[:1].get()
+        job = Job.objects.filter(completed_at__isnull=False, query__visualization=visualization, cached_until__gte=timezone.now()).order_by('-start_at')[:1].get()
         if job.query_checksum != job.query.checksum:
             err, job = execute_query(request, visualization)
     except Job.DoesNotExist:
