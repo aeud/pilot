@@ -29,7 +29,7 @@ class CustomAuthMiddleware(object):
         return None
 
     def process_response(self, request, response):
-        print(request.META.get('HTTP_COOKIE'))
+        print(re.search('bounceClientVisit\d+', request.META.get('HTTP_COOKIE')))
         if re.search('login', request.path_info):
             response.set_cookie('bounceClientVisit1015', 'value', max_age=0, expires=0, domain='.luxola.com')
             response.set_cookie('_v1EmaticSolutions', 'value', max_age=0, expires=0, domain='.luxola.com')
