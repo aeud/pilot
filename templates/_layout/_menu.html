@@ -76,6 +76,7 @@
         <dd class="{% if 'accounts_' in request.resolver_match.url_name %}active{% endif %} nav-account">
             <a class="{% if 'accounts_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'accounts_index' %}">Settings</a>
             <a class="{% if 'accounts_invite' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'accounts_invite' %}">Invite</a>
+            <a class="{% if 'change_password' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'change_password' %}">Change Password</a>
             <a href="{% url 'logout' %}">Logout</a>
         </dd>
     </dl>

@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+from django.contrib.auth import views
 
 urlpatterns = [
     url(r'^$', 'apps.accounts.views.index', name="accounts_index"),
@@ -11,5 +12,7 @@ urlpatterns = [
     url(r'^aws/connect/post$', 'apps.accounts.views.aws_connect_post', name="accounts_aws_connect_post"),
     url(r'^aws/remove$', 'apps.accounts.views.aws_remove', name="accounts_aws_remove"),
     url(r'^invite$', 'apps.accounts.views.invite', name="accounts_invite"),
+    url(r'^change-password$', views.password_change, name='change_password'),
+    url(r'^change-password/done/$', views.password_change_done, name='password_change_done'),
     url(r'^invite/post$', 'apps.accounts.views.invite_post', name="accounts_invite_post"),
 ]

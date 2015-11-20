@@ -84,7 +84,7 @@ def bq_remove_project(request):
 def login_google(request):
     print(request.META.get('HTTP_REFERER'))
     #print(request.build_absolute_uri(reverse('login_google_callback')))
-    connection = UserConnection(referrer_path=request.META.get('HTTP_REFERER'))
+    connection = UserConnection(referrer_path=request.GET.get('next', '/'))
     connection.save()
     url = 'https://accounts.google.com/o/oauth2/auth?client_id='
     url += settings.GA_CLIENT_ID
