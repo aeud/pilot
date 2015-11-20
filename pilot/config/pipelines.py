@@ -17,6 +17,13 @@ PIPELINE_CSS = {
             'media': 'screen,projection',
         },
     },
+    'error': {
+        'source_filenames': ('base/error.scss',),
+        'output_filename': 'css/error.css',
+        'extra_context': {
+            'media': 'screen,projection',
+        },
+    },
 }
 
 PIPELINE_JS = {

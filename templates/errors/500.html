@@ -3,7 +3,7 @@
 {% load pipeline %}
 
 {% block title %}Bummer!{% endblock title %}
-{% block h1 %}Nothing for you there...{% endblock h1 %}
+{% block h1 %}Oops, the application went wrong{% endblock h1 %}
 
 {% block stylesheets %}
 {{ block.super }}
@@ -13,12 +13,12 @@
 {% block container %}
 <div class="error">
     <div class="error-icon">
-        <i class="fa fa-lock"></i>
+        <i class="fa fa-bomb"></i>
     </div>
     <div class="error-message">
         <div class="title">Bummer!</div>
-        <div class="help">Wrong key...</div>
-        <div class="help2">You are not granted to this part of the application</div>
+        <div class="help">Technical issue</div>
+        <div class="help2">Please report the problem...</div>
     </div>
 </div>
 {% endblock container %}

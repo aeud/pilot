@@ -19,3 +19,8 @@ urlpatterns = [
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
     url(r'^test$', 'apps.accounts.views.test', name='test'),
 ]
+
+handler404 = 'apps.accounts.views.error_404'
+handler500 = 'apps.accounts.views.error_500'
+handler403 = 'apps.accounts.views.error_403'
+handler400 = 'apps.accounts.views.error_404'
