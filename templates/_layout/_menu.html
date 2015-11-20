@@ -87,6 +87,7 @@
         </dt>
         <dd class="{% if 'admin_' in request.resolver_match.url_name %}active{% endif %} nav-admin">
             <a class="{% if 'admin_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_index' %}">Index</a>
+            <a class="{% if 'admin_users' in request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_users' %}">Users</a>
         </dd>
     </dl>
     {% endif %}

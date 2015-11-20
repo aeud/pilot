@@ -8,3 +8,4 @@ django-pipeline
 pandas
 requests
 pyopenssl
+django-bower

@@ -20,6 +20,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django_extensions',
     'pipeline',
+#    'djangobower',
     'apps.accounts',
     'apps.visualizations',
     'apps.jobs',
@@ -85,10 +86,18 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'pipeline.finders.PipelineFinder',
+#    'djangobower.finders.BowerFinder',
 )
 
 STATIC_URL = '/assets/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'assets/pipeline')
+#BOWER_COMPONENTS_ROOT = os.path.join(BASE_DIR, 'assets/dev')
+#BOWER_INSTALLED_APPS = (
+#    'jquery#2.1.4',
+#    'components-font-awesome#4.4',
+#    'material-design-icons',
+#    'bootstrap#3'
+#)
 
 
 # Internationalization

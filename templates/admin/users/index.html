@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Users{% endblock title %}
+{% block h1 %}Users{% endblock h1 %}
+
+{% block container %}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.email }}</td>
+            <td><a href="{% url 'admin_users_change_password' user.id %}">Change password</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock container %}

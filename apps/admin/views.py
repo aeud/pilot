@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from apps.jobs.models import Job
+from apps.accounts.models import User
 from django.db import connection
 
 def index(request):
@@ -39,3 +40,17 @@ order by i asc;
     cursor.execute(query)
     visualizations = cursor.fetchall()
     return render(request, 'admin/index.html', dict(jobs=jobs, visualizations=visualizations))
+
+def users(request):
+    users = User.objects.all().order_by('email')
+    return render(request, 'admin/users/index.html', dict(users=users))
+
+def user_change_password(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    return render(request, 'admin/users/change-password.html', dict(user=user))
+
+def user_change_password_post(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.set_password(request.POST.get('password'))
+    user.save()
+    return redirect(users)
