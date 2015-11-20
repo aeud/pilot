@@ -29,9 +29,9 @@ class CustomAuthMiddleware(object):
         return None
 
     def process_response(self, request, response):
-        print(re.findall('bounceClientVisit\d+', request.META.get('HTTP_COOKIE')))
         if re.search('login', request.path_info):
-            response.set_cookie('bounceClientVisit1015', 'value', max_age=0, expires=0, domain='.luxola.com')
-            response.set_cookie('_v1EmaticSolutions', 'value', max_age=0, expires=0, domain='.luxola.com')
-            response.set_cookie('_v1EmaticSolutionsEI', 'value', max_age=0, expires=0, domain='.luxola.com')
+            for name in re.findall('bounceClientVisit\d+', request.META.get('HTTP_COOKIE')):
+                response.delete_cookie(name, domain='.luxola.com')
+            response.delete_cookie('_v1EmaticSolutions', domain='.luxola.com')
+            response.delete_cookie('_v1EmaticSolutionsEI', domain='.luxola.com')
         return response
