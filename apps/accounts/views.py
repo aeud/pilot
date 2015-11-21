@@ -10,26 +10,10 @@ from apiclient.discovery import build
 import httplib2, functools, hashlib, uuid, gzip, json, requests
 from apps.accounts.models import Account, BigQueryProject, User, UserConnection
 
-import numpy as np
-import pandas as pd
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-import matplotlib
-import matplotlib.pyplot as plt
-import io
-matplotlib.style.use('ggplot')
-
 
 def index(request):
     pending_invitations = User.objects.filter(account=request.user.account)
     return render(request, 'accounts/index.html', dict(pending_invitations=pending_invitations))
-
-def test(request):
-    df = pd.DataFrame(np.random.rand(10, 4), columns=['a', 'b', 'c', 'd'])
-    df.plot(kind='bar')
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    response = HttpResponse(buf.getvalue(), content_type='image/png')
-    return response
 
 def invite(request):
     return render(request, 'accounts/invite.html')

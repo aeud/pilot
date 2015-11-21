@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^login/google$', 'apps.accounts.views.login_google', name='login_google'),
     url(r'^login/google/callback$', 'apps.accounts.views.login_google_callback', name='login_google_callback'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}, name='logout'),
-    url(r'^test$', 'apps.accounts.views.test', name='test'),
+#    url(r'^test$', 'apps.accounts.views.test', name='test'),
 ]
 
 handler404 = 'apps.accounts.views.error_404'
