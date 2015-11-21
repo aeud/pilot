@@ -9,3 +9,4 @@ pandas
 requests
 pyopenssl
 django-bower
+matplotlib
