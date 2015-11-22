@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from apps.jobs.models import Job
-from apps.accounts.models import User
 from django.db import connection
+from django.db.models import Count
+from apps.jobs.models import Job, JobRequest
+from apps.accounts.models import User
 
 def index(request):
     query = """
@@ -42,7 +43,7 @@ order by i asc;
     return render(request, 'admin/index.html', dict(jobs=jobs, visualizations=visualizations))
 
 def users(request):
-    users = User.objects.all().order_by('email')
+    users = User.objects.all().annotate(requests_count=Count('jobrequest__id', distinct=True)).order_by('email')
     return render(request, 'admin/users/index.html', dict(users=users))
 
 def user_change_password(request, user_id):
@@ -54,3 +55,9 @@ def user_change_password_post(request, user_id):
     user.set_password(request.POST.get('password'))
     user.save()
     return redirect(users)
+
+def last_jobs(request):
+    last_jobs = Job.objects.values('id', 'created_by__email', 'completed_at', 'query__visualization__name').all().order_by('-completed_at')[:20]
+    last_job_requests = JobRequest.objects.values('id', 'created_by__email', 'created_at', 'job__query__visualization__name').all().order_by('-created_at')[:20]
+    return render(request, 'admin/last-jobs.html', dict(last_jobs=last_jobs,
+                                                        last_job_requests=last_job_requests,))

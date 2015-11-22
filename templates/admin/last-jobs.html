@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | Last jobs{% endblock title %}
+{% block h1 %}Last jobs{% endblock h1 %}
+
+{% block container %}
+<div class="row">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="well">
+            <h2>Last Jobs</h2>
+            <div class="overflow-x">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date/Time</th>
+                            <th>Email</th>
+                            <th>Visualization</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in last_jobs %}
+                        <tr>
+                            <td>{{ job.id }}</td>
+                            <td>{{ job.completed_at }}</td>
+                            <td>{{ job.created_by__email }}</td>
+                            <td>{{ job.query__visualization__name }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="well">
+            <h2>Last Job Requests</h2>
+            <div class="overflow-x">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date/Time</th>
+                            <th>Email</th>
+                            <th>Visualization</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in last_job_requests %}
+                        <tr>
+                            <td>{{ request.id }}</td>
+                            <td>{{ request.created_at }}</td>
+                            <td>{{ request.created_by__email }}</td>
+                            <td>{{ request.job__query__visualization__name }}</td>
+                            <td></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock container %}
