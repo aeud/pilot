@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max, Count
-from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity
+from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity, DashboardRequest
 from apps.visualizations.models import Visualization, Query, Graph
 import json, uuid
 
@@ -30,6 +30,7 @@ def play(request, dashboard_slug):
         except dashboard_redirection.DoesNotExist:
             return Http404('Not found')
     dashboard_entities = DashboardEntity.objects.filter(dashboard=dashboard, visualization__is_active=True).order_by('position')
+    DashboardRequest(dashboard=dashboard, created_by=request.user).save()
     return render(request, 'dashboards/play.html', dict(dashboard=dashboard,
                                                         dashboard_entities=dashboard_entities))
 
