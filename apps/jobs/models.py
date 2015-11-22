@@ -4,6 +4,7 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from apps.visualizations.models import Query
 from apps.accounts.models import Account, User
+from apps.dashboards.models import Dashboard
 import gzip, json
 
 class Job(models.Model):
@@ -86,6 +87,7 @@ class JobRequest(models.Model):
     job        = models.ForeignKey(Job)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User)
+    dashboard  = models.ForeignKey(Dashboard, null=True)
 
 class JobExportRequest(models.Model):
     export     = models.ForeignKey(JobExport)
