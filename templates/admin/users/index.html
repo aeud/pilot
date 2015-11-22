@@ -10,6 +10,7 @@
             <th>Email</th>
             <th>Requests</th>
             <th>Actions</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -17,6 +18,7 @@
         <tr>
             <td>{{ user.email }}</td>
             <td>{{ user.requests_count }}</td>
+            <td><a href="{% url 'admin_users_show' user.id %}">Show</a></td>
             <td><a href="{% url 'admin_users_change_password' user.id %}">Change password</a></td>
         </tr>
         {% endfor %}

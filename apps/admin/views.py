@@ -46,6 +46,27 @@ def users(request):
     users = User.objects.all().annotate(requests_count=Count('jobrequest__id', distinct=True)).order_by('email')
     return render(request, 'admin/users/index.html', dict(users=users))
 
+def user_show(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    query = """
+select
+    i::date date,
+    count(distinct r.id) job_requests
+from
+    generate_series(
+        CURRENT_DATE - '1 month'::interval + '1 day'::interval, CURRENT_DATE, '1 day'::interval
+    ) i
+    left join pilot.jobs_jobrequest r on (date(i) = date(r.created_at))
+where r.created_by_id = %s or r is null
+group by i
+order by i asc;
+        """
+    cursor = connection.cursor()
+    cursor.execute(query, [user.id])
+    last_requests = cursor.fetchall()
+    return render(request, 'admin/users/show.html', dict(user=user,
+                                                         last_requests=last_requests,))
+
 def user_change_password(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     return render(request, 'admin/users/change-password.html', dict(user=user))
