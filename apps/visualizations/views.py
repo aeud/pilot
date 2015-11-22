@@ -218,6 +218,9 @@ def execute(request, visualization_id):
     if err:
         return HttpResponse(err, 'application/json', status=404)
     job_request = JobRequest(created_by=request.user, job=job)
+    if request.GET.get('dashboard'):
+        dashboard = get_object_or_404(Dashboard, pk=request.GET.get('dashboard'), account=request.user.account)
+        job_request.dashboard = dashboard
     job_request.save()
     return HttpResponse(json.dumps(dict(url=job.cache_url, export_url=request.build_absolute_uri(reverse('jobs_export', kwargs=dict(job_id=job.id))))), 'application/json')
 

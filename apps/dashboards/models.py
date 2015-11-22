@@ -61,3 +61,8 @@ class DashboardRedirection(models.Model):
     dashboard      = models.ForeignKey(Dashboard)
     slug           = models.CharField(max_length=255, unique=True)
     created_at     = models.DateTimeField(auto_now_add=True)
+
+class DashboardRequest(models.Model):
+    dashboard      = models.ForeignKey(Dashboard)
+    created_by     = models.ForeignKey(User)
+    created_at     = models.DateTimeField(auto_now_add=True)
