@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db import connection
 from django.db.models import Count
 from apps.jobs.models import Job, JobRequest
+from apps.dashboards.models import Dashboard
 from apps.accounts.models import User
 
 def index(request):
@@ -64,8 +65,12 @@ order by i asc;
     cursor = connection.cursor()
     cursor.execute(query, [user.id])
     last_requests = cursor.fetchall()
+    best_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(dashboardrequest__created_by=user).annotate(requests_count=Count('dashboardrequest__id', distinct=True)).order_by('-requests_count')[:10]
+    starred_dashboards = Dashboard.objects.filter(star_users=user).order_by('name')
     return render(request, 'admin/users/show.html', dict(user=user,
-                                                         last_requests=last_requests,))
+                                                         last_requests=last_requests,
+                                                         best_dashboards=best_dashboards,
+                                                         starred_dashboards=starred_dashboards,))
 
 def user_change_password(request, user_id):
     user = get_object_or_404(User, pk=user_id)

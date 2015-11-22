@@ -5,6 +5,49 @@
 
 {% block container %}
 <div class="row">
+    <div class="col-md-6">
+        <div class="well">
+            <h2>Best dashboards</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Dashboard</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dashboard in best_dashboards %}
+                    <tr>
+                        <td><a href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard.name }}</a></td>
+                        <td>{{ dashboard.requests_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <h2>Starred dashboards</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Dashboard</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dashboard in starred_dashboards %}
+                    <tr>
+                        <td><a href="{% url 'dashboards_play' dashboard.slug %}">{{ dashboard.name }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<h2>Starred dashboards</h2>
+<div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="well">
             <h2>Last month requests</h2>

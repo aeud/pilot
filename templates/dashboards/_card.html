@@ -1,6 +1,7 @@
 <a class="well" href="{% url 'dashboards_play' dashboard.slug %}">
     <h3>{{ dashboard.name }}</h3>
     <div class="indicators">
+        {% if dashboard.entities_count %}
         <div class="indicator i-ads" data-toggle="tooltip" data-placement="top" title="Visualizations">
             <div class="i-icon">
                 <i class="material-icons">insert_chart</i>
@@ -9,5 +10,6 @@
                 {{ dashboard.entities_count }}
             </div>
         </div>
+        {% endif %}
     </div>
 </a>
