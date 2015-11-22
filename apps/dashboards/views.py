@@ -13,7 +13,9 @@ def index(request):
 def stars(request):
     last_dashboards = Dashboard.objects.filter(dashboardentity__visualization__query__job__jobrequest__created_by=request.user).annotate(request_created_at=Max('dashboardentity__visualization__query__job__jobrequest__created_at'), entities_count=Count('dashboardentity__id', distinct=True)).order_by('-request_created_at')[:8]
     stars = Dashboard.objects.filter(star_users=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
-    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards, stars=stars))
+    best_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(dashboardrequest__created_by=request.user).annotate(requests_count=Count('dashboardrequest__id', distinct=True), entities_count=Count('dashboardentity__id', distinct=True)).order_by('-requests_count')[:10]
+    last_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(dashboardrequest__created_by=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('-dashboardrequest__created_at').distinct()[:10]
+    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards, stars=stars, best_dashboards=best_dashboards))
 
 def show(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
