@@ -65,6 +65,7 @@ class User(AbstractBaseUser):
     avatar_url      = models.CharField(max_length=255, null=True)
     ga_uuid         = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     account         = models.ForeignKey(Account, null=True)
+    can_invite      = models.BooleanField(default=False)
 
     objects = UserManager()
 
