@@ -22,11 +22,18 @@
 {% endblock breadcrumbs_nav %}
 
 {% block container %}
-<div class="row resize">
-    {% for visualization in visualizations %}
-    <div class="col-md-4">
-        {% include "visualizations/_card.html" %}
+<div class="well">
+    <h2>{{ visualizations|length }} active visualizations</h2>
+    <div class="list-group">
+        {% for visualization in visualizations %}
+        <a href="{% url 'visualizations_show' visualization.id %}" class="list-group-item">
+            <div class="row">
+                <div class="col-md-6">{{ visualization.name }}</div>
+                <div class="col-md-4">{% if visualization.dashboards_count %}{{ visualization.dashboards_count }} dashboards{% endif %}</div>
+                <div class="col-md-2">{{ visualization.entities_count }}</div>
+            </div>
+        </a>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 {% endblock container %}
