@@ -82,6 +82,20 @@ def user_change_password_post(request, user_id):
     user.save()
     return redirect(users)
 
+def auth_invite(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id, account=request.user.account)
+        user.can_invite = True
+        user.save()
+    return redirect(users)
+
+def unauth_invite(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id, account=request.user.account)
+        user.can_invite = False
+        user.save()
+    return redirect(users)
+
 def last_jobs(request):
     last_jobs = Job.objects.values('id', 'created_by__email', 'completed_at', 'query__visualization__name').all().order_by('-completed_at')[:20]
     last_job_requests = JobRequest.objects.values('id', 'created_by__email', 'created_at', 'job__query__visualization__name').all().order_by('-created_at')[:20]

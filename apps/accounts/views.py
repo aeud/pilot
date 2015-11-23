@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -19,6 +19,8 @@ def invite(request):
     return render(request, 'accounts/invite.html')
 
 def invite_post(request):
+    if not request.user.can_invite:
+        return render(request, 'errors/403.html', status=403)
     email = request.POST.get('email')
     try:
         user = User.objects.get(email=email)

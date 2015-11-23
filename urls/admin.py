@@ -7,4 +7,6 @@ urlpatterns = [
     url(r'^users/(?P<user_id>\d+)/$', 'apps.admin.views.user_show', name='admin_users_show'),
     url(r'^users/(?P<user_id>\d+)/change-password$', 'apps.admin.views.user_change_password', name='admin_users_change_password'),
     url(r'^users/(?P<user_id>\d+)/change-password/post$', 'apps.admin.views.user_change_password_post', name='admin_users_change_password_post'),
+    url(r'^users/(?P<user_id>\d+)/invite/auth$', 'apps.admin.views.auth_invite', name='admin_users_auth_invite'),
+    url(r'^users/(?P<user_id>\d+)/invite/unauth$', 'apps.admin.views.unauth_invite', name='admin_users_unauth_invite'),
 ]
