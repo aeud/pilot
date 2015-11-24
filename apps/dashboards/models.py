@@ -5,7 +5,7 @@ import uuid
 
 class Dashboard(models.Model):
     account    = models.ForeignKey(Account)
-    name       = models.CharField(max_length=32)
+    name       = models.CharField(max_length=255)
     slug       = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active  = models.BooleanField(default=True)
