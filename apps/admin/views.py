@@ -52,13 +52,13 @@ def user_show(request, user_id):
     query = """
 select
     i::date date,
-    count(distinct r) job_requests
+    count(distinct r.id) job_requests
 from
     generate_series(
         CURRENT_DATE - '1 month'::interval + '1 day'::interval, CURRENT_DATE, '1 day'::interval
     ) i
     left join pilot.jobs_jobrequest r on (date(i) = date(r.created_at))
-where r.created_by_id = %s or r is null
+where r.created_by_id = %s or r.id is null
 group by i
 order by i asc;
         """
