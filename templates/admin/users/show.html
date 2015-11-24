@@ -3,6 +3,37 @@
 {% block title %}Admin | User{% endblock title %}
 {% block h1 %}{{ user.email }}{% endblock h1 %}
 
+{% block breadcrumbs_nav %}
+{% if request.user.is_staff %}
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="{% url 'admin_users_change_password' user.id %}">Change password</a></li>
+        </ul>
+    </div>
+</div>
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">link</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            {% for account in accounts %}
+            <li><a href="{% url 'admin_user_quick_update_account' user.id account.id %}">{{ account.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'admin_users' %}">Users</a></li>
+    <li class="active">{{ user.email }}</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
 {% block container %}
 <div class="row">
     <div class="col-md-6">
@@ -54,9 +85,6 @@
         </div>
     </div>
 </div>
-{% if request.user.is_staff %}
-<a href="{% url 'admin_users_change_password' user.id %}">Change password</a>
-{% endif %}
 {% endblock container %}
 
 {% block javascripts %}
