@@ -28,16 +28,7 @@
                     <td>{{ user.is_admin }}</td>
                     <td>{{ user.account.name }}</td>
                     <td>{{ user.requests_count }}</td>
-                    <td>
-                        {{ user.can_invite }}
-                        {% if request.user.is_staff %}
-                        {% if user.can_invite %}
-                        (<a href="{% url 'admin_users_unauth_invite' user.id %}">change</a>)
-                        {% else %}
-                        (<a href="{% url 'admin_users_auth_invite' user.id %}">change</a>)
-                        {% endif %}
-                        {% endif %}
-                    </td>
+                    <td>{{ user.can_invite }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

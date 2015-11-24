@@ -13,6 +13,11 @@
         <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="{% url 'admin_users_change_password' user.id %}">Change password</a></li>
             <li class="divider"></li>
+            {% if user.can_invite %}
+            <li><a href="{% url 'admin_users_unauth_invite' user.id %}">Cannot invite</a></li>
+            {% else %}
+            <li><a href="{% url 'admin_users_auth_invite' user.id %}">Can invite</a></li>
+            {% endif %}
             {% if user.is_staff %}
             <li><a href="{% url 'admin_user_remove_staff' user.id %}">Remove staff</a></li>
             {% else %}
