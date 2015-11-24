@@ -54,6 +54,9 @@
         </div>
     </div>
 </div>
+{% if request.user.is_staff %}
+<a href="{% url 'admin_users_change_password' user.id %}">Change password</a>
+{% endif %}
 {% endblock container %}
 
 {% block javascripts %}

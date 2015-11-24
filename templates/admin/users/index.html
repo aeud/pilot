@@ -4,35 +4,36 @@
 {% block h1 %}Users{% endblock h1 %}
 
 {% block container %}
-<table class="table">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Requests</th>
-            <th>Can invite</th>
-            <th>Actions</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for user in users %}
-        <tr>
-            <td>{{ user.email }}</td>
-            <td>{{ user.requests_count }}</td>
-            <td>
-                {{ user.can_invite }}
-                {% if request.user.is_staff %}
-                {% if user.can_invite %}
-                (<a href="{% url 'admin_users_unauth_invite' user.id %}">change</a>)
-                {% else %}
-                (<a href="{% url 'admin_users_auth_invite' user.id %}">change</a>)
-                {% endif %}
-                {% endif %}
-            </td>
-            <td><a href="{% url 'admin_users_show' user.id %}">Show</a></td>
-            <td><a href="{% url 'admin_users_change_password' user.id %}">Change password</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="well">
+    <h2>Users</h2>
+    <div class="overflow-x">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Requests</th>
+                    <th>Can invite</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><a href="{% url 'admin_users_show' user.id %}">{{ user.email }}</a></td>
+                    <td>{{ user.requests_count }}</td>
+                    <td>
+                        {{ user.can_invite }}
+                        {% if request.user.is_staff %}
+                        {% if user.can_invite %}
+                        (<a href="{% url 'admin_users_unauth_invite' user.id %}">change</a>)
+                        {% else %}
+                        (<a href="{% url 'admin_users_auth_invite' user.id %}">change</a>)
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock container %}
