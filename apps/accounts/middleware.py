@@ -26,6 +26,8 @@ class CustomAuthMiddleware(object):
                 request.stars = Dashboard.objects.filter(star_users=request.user).order_by('name')
             else:
                 return render(request, 'errors/wait.html', status=403)
+            if re.search('^/admin', request.path_info) and not request.user.is_admin:
+                return render(request, 'errors/403.html', status=403)
         else:
             return HttpResponseRedirect(reverse('login') + '?next=' + request.path)
         return None
