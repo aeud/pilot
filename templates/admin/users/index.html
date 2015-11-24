@@ -11,24 +11,24 @@
             <thead>
                 <tr>
                     <th>Email</th>
+                    <th>Account</th>
                     <th>Active</th>
+                    <th>Can invite</th>
                     <th>Staff</th>
                     <th>Admin</th>
-                    <th>Account</th>
                     <th>Requests</th>
-                    <th>Can invite</th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in users %}
                 <tr>
                     <td><a href="{% url 'admin_users_show' user.id %}">{{ user.email }}</a></td>
+                    <td>{{ user.account.name }}</td>
                     <td>{{ user.is_active }}</td>
+                    <td>{{ user.can_invite }}</td>
                     <td>{{ user.is_staff }}</td>
                     <td>{{ user.is_admin }}</td>
-                    <td>{{ user.account.name }}</td>
                     <td>{{ user.requests_count }}</td>
-                    <td>{{ user.can_invite }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -52,7 +52,7 @@ def user_show(request, user_id):
     query = """
 select
     i::date date,
-    count(distinct r.id) job_requests
+    count(distinct r) job_requests
 from
     generate_series(
         CURRENT_DATE - '1 month'::interval + '1 day'::interval, CURRENT_DATE, '1 day'::interval
