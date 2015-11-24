@@ -13,4 +13,6 @@ urlpatterns = [
     url(r'^users/(?P<user_id>\d+)/remove-account$', 'apps.admin.views.user_quick_remove_account', name='admin_user_quick_remove_account'),
     url(r'^users/(?P<user_id>\d+)/remove$', 'apps.admin.views.user_remove', name='admin_user_remove'),
     url(r'^users/(?P<user_id>\d+)/active$', 'apps.admin.views.user_active', name='admin_user_active'),
+    url(r'^users/(?P<user_id>\d+)/make-staff$', 'apps.admin.views.user_make_staff', name='admin_user_make_staff'),
+    url(r'^users/(?P<user_id>\d+)/remove-staff$', 'apps.admin.views.user_remove_staff', name='admin_user_remove_staff'),
 ]

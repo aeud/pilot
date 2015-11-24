@@ -113,6 +113,20 @@ def user_active(request, user_id):
         user.save()
     return redirect(user_show, user_id=user.id)
 
+def user_make_staff(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_staff = True
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
+def user_remove_staff(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_staff = False
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
 
 def auth_invite(request, user_id):
     if request.user.is_staff:
