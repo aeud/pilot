@@ -92,6 +92,27 @@ def user_quick_update_account(request, user_id, account_id):
         user.save()
     return redirect(user_show, user_id=user.id)
 
+def user_quick_remove_account(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id)
+        user.account = None
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
+def user_remove(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_active = False
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
+def user_active(request, user_id):
+    if request.user.is_staff:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_active = True
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
 
 def auth_invite(request, user_id):
     if request.user.is_staff:
