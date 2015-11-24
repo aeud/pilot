@@ -85,7 +85,7 @@ def user_change_password_post(request, user_id):
     return redirect(users)
 
 def user_quick_update_account(request, user_id, account_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id)
         account = get_object_or_404(Account, pk=account_id)
         user.account = account
@@ -93,50 +93,64 @@ def user_quick_update_account(request, user_id, account_id):
     return redirect(user_show, user_id=user.id)
 
 def user_quick_remove_account(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id)
         user.account = None
         user.save()
     return redirect(user_show, user_id=user.id)
 
 def user_remove(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id)
         user.is_active = False
         user.save()
     return redirect(user_show, user_id=user.id)
 
 def user_active(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id)
         user.is_active = True
         user.save()
     return redirect(user_show, user_id=user.id)
 
 def user_make_staff(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id)
         user.is_staff = True
         user.save()
     return redirect(user_show, user_id=user.id)
 
 def user_remove_staff(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id)
         user.is_staff = False
         user.save()
     return redirect(user_show, user_id=user.id)
 
+def user_make_admin(request, user_id):
+    if request.user.is_admin:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_admin = True
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
+def user_remove_admin(request, user_id):
+    if request.user.is_admin:
+        user = get_object_or_404(User, pk=user_id)
+        user.is_admin = False
+        user.save()
+    return redirect(user_show, user_id=user.id)
+
 
 def auth_invite(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id, account=request.user.account)
         user.can_invite = True
         user.save()
     return redirect(users)
 
 def unauth_invite(request, user_id):
-    if request.user.is_staff:
+    if request.user.is_admin:
         user = get_object_or_404(User, pk=user_id, account=request.user.account)
         user.can_invite = False
         user.save()

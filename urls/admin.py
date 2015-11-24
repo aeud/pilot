@@ -15,4 +15,6 @@ urlpatterns = [
     url(r'^users/(?P<user_id>\d+)/active$', 'apps.admin.views.user_active', name='admin_user_active'),
     url(r'^users/(?P<user_id>\d+)/make-staff$', 'apps.admin.views.user_make_staff', name='admin_user_make_staff'),
     url(r'^users/(?P<user_id>\d+)/remove-staff$', 'apps.admin.views.user_remove_staff', name='admin_user_remove_staff'),
+    url(r'^users/(?P<user_id>\d+)/make-admin$', 'apps.admin.views.user_make_admin', name='admin_user_make_admin'),
+    url(r'^users/(?P<user_id>\d+)/remove-admin$', 'apps.admin.views.user_remove_admin', name='admin_user_remove_admin'),
 ]

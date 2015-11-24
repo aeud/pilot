@@ -13,6 +13,7 @@
                     <th>Email</th>
                     <th>Active</th>
                     <th>Staff</th>
+                    <th>Admin</th>
                     <th>Account</th>
                     <th>Requests</th>
                     <th>Can invite</th>
@@ -24,6 +25,7 @@
                     <td><a href="{% url 'admin_users_show' user.id %}">{{ user.email }}</a></td>
                     <td>{{ user.is_active }}</td>
                     <td>{{ user.is_staff }}</td>
+                    <td>{{ user.is_admin }}</td>
                     <td>{{ user.account.name }}</td>
                     <td>{{ user.requests_count }}</td>
                     <td>
