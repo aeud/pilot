@@ -20,7 +20,9 @@ class CustomAuthMiddleware(object):
         if re.search('login|logout|robots\.txt|test', request.path_info):
             return None
         if request.user.id:
-            if request.user.account:
+            if not request.user.is_active:
+                return render(request, 'errors/inactive-account.html', status=403)
+            elif request.user.account:
                 request.stars = Dashboard.objects.filter(star_users=request.user).order_by('name')
             else:
                 return render(request, 'errors/wait.html', status=403)

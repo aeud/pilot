@@ -1,4 +1,4 @@
-{% if request.user.account %}
+{% if request.user.account and request.user.is_active %}
 <nav class="menu">
     {% if dashboard and 'dashboards_' in request.resolver_match.url_name %}
     <dl>
@@ -94,5 +94,16 @@
         </dd>
     </dl>
     {% endif %}
+</nav>
+{% elif request.user.id %}
+<nav class="menu">
+    <dl>
+        <dt data-link="nav-account">
+            <i class="material-icons">face</i> Account
+        </dt>
+        <dd class="{% if 'accounts_' in request.resolver_match.url_name %}active{% endif %} nav-account">
+            <a href="{% url 'logout' %}">Logout</a>
+        </dd>
+    </dl>
 </nav>
 {% endif %}

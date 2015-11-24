@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load pipeline %}
+
+{% block title %}Bummer!{% endblock title %}
+{% block h1 %}Nothing for you there...{% endblock h1 %}
+
+{% block stylesheets %}
+{{ block.super }}
+{% stylesheet 'error' %}
+{% endblock stylesheets %}
+
+{% block container %}
+<div class="error">
+    <div class="error-icon">
+        <i class="fa fa-user-times"></i>
+    </div>
+    <div class="error-message">
+        <div class="title">Bummer!</div>
+        <div class="help">Wrong account</div>
+        <div class="help2">Your account has been suspended</div>
+    </div>
+</div>
+{% endblock container %}
