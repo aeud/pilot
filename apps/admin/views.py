@@ -57,8 +57,7 @@ from
     generate_series(
         CURRENT_DATE - '1 month'::interval + '1 day'::interval, CURRENT_DATE, '1 day'::interval
     ) i
-    left join pilot.jobs_jobrequest r on (date(i) = date(r.created_at))
-where r.created_by_id = %s or r.id is null
+    left join pilot.jobs_jobrequest r on (date(i), %s) = (date(r.created_at), r.created_by_id)
 group by i
 order by i asc;
         """
