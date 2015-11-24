@@ -5,10 +5,10 @@
                 {% if visualization.description %}
                 <i class="material-icons popover-icon" data-trigger="hover" data-container="body" data-toggle="popover" data-placement="bottom" data-content="{{ visualization.description }}">help</i>
                 {% endif %}
+                {% if dashboard %}
                 <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="material-icons">more_vert</i>
                 </button>
-                {% if dashboard %}
                 <ul class="dropdown-menu dropdown-menu-right">
                     {% if request.user.is_staff %}
                     <li><a href="{% url 'dashboards_visualizations_edit' dashboard.id dashboard_entity.id %}">Edit entity</a></li>
