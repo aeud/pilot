@@ -41,7 +41,40 @@ order by i asc;
     cursor = connection.cursor()
     cursor.execute(query)
     visualizations = cursor.fetchall()
-    return render(request, 'admin/index.html', dict(jobs=jobs, visualizations=visualizations))
+    query = """
+select
+    u.email email,
+    count(distinct jr.id) requests
+from
+    pilot.accounts_user u
+    left join pilot.jobs_jobrequest jr on u.id = jr.created_by_id
+where date(jr.created_at) = CURRENT_DATE - INTERVAL '1 day'
+group by 1
+order by 2 desc
+limit 10;
+        """
+    cursor = connection.cursor()
+    cursor.execute(query)
+    yesterday_top_users = cursor.fetchall()
+    query = """
+select
+    u.email email,
+    count(distinct jr.id) requests
+from
+    pilot.accounts_user u
+    left join pilot.jobs_jobrequest jr on u.id = jr.created_by_id
+where date(jr.created_at) = CURRENT_DATE
+group by 1
+order by 2 desc
+limit 10;
+        """
+    cursor = connection.cursor()
+    cursor.execute(query)
+    today_top_users = cursor.fetchall()
+    return render(request, 'admin/index.html', dict(jobs=jobs,
+                                                    visualizations=visualizations,
+                                                    yesterday_top_users=yesterday_top_users,
+                                                    today_top_users=today_top_users))
 
 def users(request):
     users = User.objects.all().annotate(requests_count=Count('jobrequest__id', distinct=True)).order_by('email')

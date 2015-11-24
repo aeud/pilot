@@ -5,6 +5,54 @@
 
 {% block container %}
 <div class="row">
+    <div class="col-md-6">
+        <div class="well">
+            <h2>Yesterday top users</h2>
+            <div class="overflow-x">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Requests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in yesterday_top_users %}
+                        <tr>
+                            <td>{{ user.0 }}</td>
+                            <td>{{ user.1 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="well">
+            <h2>Today top users</h2>
+            <div class="overflow-x">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Requests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in today_top_users %}
+                        <tr>
+                            <td>{{ user.0 }}</td>
+                            <td>{{ user.1 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12">
         <div class="well">
             <h2>Jobs</h2>
