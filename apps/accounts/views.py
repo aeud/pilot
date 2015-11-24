@@ -12,8 +12,7 @@ from apps.accounts.models import Account, BigQueryProject, User, UserConnection
 
 
 def index(request):
-    pending_invitations = User.objects.filter(account=request.user.account)
-    return render(request, 'accounts/index.html', dict(pending_invitations=pending_invitations))
+    return render(request, 'accounts/index.html')
 
 def invite(request):
     return render(request, 'accounts/invite.html')
