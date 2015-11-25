@@ -93,7 +93,7 @@ class Visualization(models.Model):
                                       description=v.get('description'),
                                       account=request.user.account,
                                       cache_for=v.get('cache_for'),
-                                      cache_until=v.get('cache_until')
+                                      cache_until=v.get('cache_until'),
                                       created_by=request.user,)
         if v.get('query'):
             visualization.query = Query.new_from_dict(v.get('query'))

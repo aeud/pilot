@@ -8,9 +8,10 @@ class Dashboard(models.Model):
     name       = models.CharField(max_length=255)
     slug       = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(User, null=True, related_name='creator_dashboard_user')
     is_active  = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
-    star_users = models.ManyToManyField(User)
+    star_users = models.ManyToManyField(User, related_name='star_dashboards_users')
 
     class Meta:
         unique_together = ('account', 'slug',)
@@ -29,7 +30,8 @@ class Dashboard(models.Model):
             slug = d.get('slug')
         dashboard = Dashboard(name=d.get('name'),
                               slug=slug,
-                              account=request.user.account,)
+                              account=request.user.account,
+                              created_by=request.user,)
         dashboard.save()
         for e in d.get('entities'):
             DashboardEntity.new_from_dict(request, dashboard, e)

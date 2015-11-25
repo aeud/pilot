@@ -39,7 +39,7 @@ def new(request):
     return render(request, 'dashboards/new.html')
 
 def create(request):
-    dashboard = Dashboard(name=request.POST.get('name'), account=request.user.account, slug=request.POST.get('slug'))
+    dashboard = Dashboard(name=request.POST.get('name'), account=request.user.account, slug=request.POST.get('slug'), created_by=request.user)
     dashboard.save()
     return redirect(play, dashboard_slug=dashboard.slug)
 
