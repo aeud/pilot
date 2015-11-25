@@ -232,7 +232,7 @@ def remove(request, visualization_id):
 
 def duplicate(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
-    new_visualization = Visualization.duplicate(visualization)
+    new_visualization = Visualization.duplicate(request, visualization)
     return redirect(edit, visualization_id=new_visualization.id)
 
 def v_export(request, visualization_id):

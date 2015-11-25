@@ -1,5 +1,5 @@
 from django.db import models
-from apps.accounts.models import Account
+from apps.accounts.models import Account, User
 import hashlib
 
 class Query(models.Model):
@@ -72,13 +72,15 @@ class Visualization(models.Model):
     updated_at   = models.DateTimeField(auto_now=True)
     cache_for    = models.IntegerField(null=True)
     cache_until  = models.TimeField(null=True)
+    created_by   = models.ForeignKey(User, null=True)
 
-    def duplicate(visualization):
+    def duplicate(request, visualization):
         duplicate = Visualization(name='Copy of ' + visualization.name,
                                   description=visualization.description,
                                   account=visualization.account,
                                   cache_for=visualization.cache_for,
-                                  cache_until=visualization.cache_until)
+                                  cache_until=visualization.cache_until,
+                                  created_by=request.user)
         if visualization.query:
             duplicate.query = Query.duplicate(visualization.query)
         if visualization.graph:
@@ -91,7 +93,8 @@ class Visualization(models.Model):
                                       description=v.get('description'),
                                       account=request.user.account,
                                       cache_for=v.get('cache_for'),
-                                      cache_until=v.get('cache_until'),)
+                                      cache_until=v.get('cache_until')
+                                      created_by=request.user,)
         if v.get('query'):
             visualization.query = Query.new_from_dict(v.get('query'))
         if v.get('graph'):
