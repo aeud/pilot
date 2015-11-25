@@ -29,8 +29,8 @@
         <a href="{% url 'visualizations_show' visualization.id %}" class="list-group-item">
             <div class="row">
                 <div class="col-md-6">{{ visualization.name }}</div>
-                <div class="col-md-4">{% if visualization.dashboards_count %}{{ visualization.dashboards_count }} dashboards{% endif %}</div>
-                <div class="col-md-2">{{ visualization.entities_count }}</div>
+                <div class="col-md-3">{% if visualization.dashboards_count %}{{ visualization.dashboards_count }} dashboards{% endif %}</div>
+                <div class="col-md-3">{{ visualization.created_by.email }}</div>
             </div>
         </a>
         {% endfor %}
