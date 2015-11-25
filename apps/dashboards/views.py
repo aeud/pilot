@@ -10,7 +10,7 @@ def index(request):
     dashboards = Dashboard.objects.filter(account=request.user.account, is_active=True).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
     return render(request, 'dashboards/index.html', dict(dashboards=dashboards))
 
-def stars(request):
+def my(request):
     stars = Dashboard.objects.filter(is_active=True, star_users=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
     best_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(is_active=True, dashboardrequest__created_by=request.user).annotate(requests_count=Count('dashboardrequest__id', distinct=True), entities_count=Count('dashboardentity__id', distinct=True), last_visited_at=Max('dashboardrequest__created_at')).order_by('-requests_count')[:5]
     last_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(is_active=True, dashboardrequest__created_by=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True), last_visited_at=Max('dashboardrequest__created_at')).order_by('-last_visited_at').distinct()[:5]

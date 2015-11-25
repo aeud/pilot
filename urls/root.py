@@ -3,7 +3,7 @@ from . import accounts, visualizations, dashboards, jobs, admin
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
 urlpatterns = [
-    url(r'^$', 'apps.dashboards.views.stars', name='home'),
+    url(r'^$', 'apps.dashboards.views.my', name='home'),
     url(r'^account/', include(accounts)),
     url(r'^visualizations/', include(visualizations)),
     url(r'^jobs/', include(jobs)),
