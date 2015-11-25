@@ -23,7 +23,8 @@ def new(request):
 def create(request):
     visualization = Visualization(name=request.POST.get('name'),
                                   description=request.POST.get('description'),
-                                  account=request.user.account)
+                                  account=request.user.account,
+                                  created_by=request.user,)
     if request.POST.get('cache_for'):
         visualization.cache_for = int(request.POST.get('cache_for'))
         visualization.cache_until = None
