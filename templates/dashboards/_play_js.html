@@ -1,6 +1,7 @@
 <script>
 $('.chart').prepend($('<div>').attr('class', 'spinner').append($('<div>').attr('class', 'dot1')).append($('<div>').attr('class', 'dot2')));
-google.load('visualization', '1');
+google.load('visualization', '1.1');
+//google.load('visualization', '1.1', {packages: ["corechart", "bar"]});
 function buildDataTable(s3URL, callback){
     $.ajax({
         url: s3URL,
