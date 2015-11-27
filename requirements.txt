@@ -10,3 +10,4 @@ requests
 pyopenssl
 django-bower
 matplotlib
+premailer

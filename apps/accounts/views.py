@@ -1,14 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth import login as manual_login
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
 from oauth2client import client
 from oauth2client.client import OAuth2Credentials as Credentials
 from oauth2client.client import verify_id_token
 from apiclient.discovery import build
 import httplib2, functools, hashlib, uuid, gzip, json, requests
 from apps.accounts.models import Account, BigQueryProject, User, UserConnection
+from premailer import transform
 
 
 def index(request):
@@ -24,12 +27,18 @@ def invite_post(request):
     try:
         user = User.objects.get(email=email)
         if user.account:
-            return redirect(index)
+            return HttpResponseRedirect(reverse('accounts_invite') + '?success=0')
         user.account = request.user.account
     except User.DoesNotExist:
         user = User(email=email, account=request.user.account)
+    subject = 'Welcome to a colorful world!'
+    body = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user, message=request.POST.get('message'))))
+    email_message = EmailMultiAlternatives(subject, body, 'Master Yoda <colors@luxola.com>', [user.email])
+    html_email = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user, message=request.POST.get('message'))))
+    email_message.attach_alternative(html_email, 'text/html')
+    email_message.send()
     user.save()
-    return redirect(index)
+    return HttpResponseRedirect(reverse('accounts_invite') + '?success=1')
 
 def get_flow(request):
     return client.flow_from_clientsecrets(

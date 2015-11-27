@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^users/(?P<user_id>\d+)/remove-staff$', 'apps.admin.views.user_remove_staff', name='admin_user_remove_staff'),
     url(r'^users/(?P<user_id>\d+)/make-admin$', 'apps.admin.views.user_make_admin', name='admin_user_make_admin'),
     url(r'^users/(?P<user_id>\d+)/remove-admin$', 'apps.admin.views.user_remove_admin', name='admin_user_remove_admin'),
+    url(r'^users/(?P<user_id>\d+)/send-invitation$', 'apps.admin.views.user_send_invitation', name='admin_user_send_invitation'),
 ]

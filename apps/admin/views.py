@@ -1,9 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import connection
 from django.db.models import Count
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
+from django.http import Http404, HttpResponse
 from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard
 from apps.accounts.models import User, Account
+from premailer import transform
 
 def index(request):
     query = """
@@ -165,6 +169,15 @@ def user_remove_admin(request, user_id):
     user.save()
     return redirect(user_show, user_id=user.id)
 
+def user_send_invitation(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    subject = 'Welcome to a colorful world!'
+    body = transform(loader.render_to_string('emails/invite.html', dict(user=user)))
+    email_message = EmailMultiAlternatives(subject, body, 'Master Yoda <colors@luxola.com>', [user.email])
+    html_email = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user)))
+    email_message.attach_alternative(html_email, 'text/html')
+    email_message.send()
+    return redirect(user_show, user_id=user.id)
 
 def auth_invite(request, user_id):
     user = get_object_or_404(User, pk=user_id, account=request.user.account)
