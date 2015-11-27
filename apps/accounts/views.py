@@ -31,12 +31,13 @@ def invite_post(request):
         user.account = request.user.account
     except User.DoesNotExist:
         user = User(email=email, account=request.user.account)
-    subject = 'Welcome to a colorful world!'
-    body = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user, message=request.POST.get('message'))))
-    email_message = EmailMultiAlternatives(subject, body, 'Master Yoda <colors@luxola.com>', [user.email])
-    html_email = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user, message=request.POST.get('message'))))
-    email_message.attach_alternative(html_email, 'text/html')
-    email_message.send()
+    if request.POST.get('send') == 'yes':
+        subject = 'Welcome to a colorful world!'
+        body = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user, message=request.POST.get('message'))))
+        email_message = EmailMultiAlternatives(subject, body, 'Master Yoda <colors@luxola.com>', [user.email])
+        html_email = transform(loader.render_to_string('emails/invite.html', dict(user=user, me=request.user, message=request.POST.get('message'))))
+        email_message.attach_alternative(html_email, 'text/html')
+        email_message.send()
     user.save()
     return HttpResponseRedirect(reverse('accounts_invite') + '?success=1')
 
