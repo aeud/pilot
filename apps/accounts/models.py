@@ -66,6 +66,7 @@ class User(AbstractBaseUser):
     ga_uuid         = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     account         = models.ForeignKey(Account, null=True)
     can_invite      = models.BooleanField(default=False)
+    can_schedule    = models.BooleanField(default=False)
 
     objects = UserManager()
 
