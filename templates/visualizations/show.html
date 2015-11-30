@@ -19,9 +19,8 @@
             <i class="material-icons">more_horiz</i>
         </button>
         <ul class="dropdown-menu dropdown-menu-right">
-            <li><a href="#" id="schedule">Schedule</a></li>
+            {% if user.can_schedule %}<li><a href="#" id="schedule">Schedule</a></li>{% endif %}
             {% if request.user.is_staff %}
-            <li role="separator" class="divider"></li>
             <li><a href="{% url 'visualizations_duplicate' visualization.id %}">Duplicate</a></li>
             <li><a href="{% url 'visualizations_export' visualization.id %}">Export</a></li>
             <li role="separator" class="divider"></li>
@@ -96,6 +95,7 @@
 {{ block.super }}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/js/standalone/selectize.min.js"></script>
 {% include "dashboards/_play_js.html" %}
+{% if user.can_schedule %}
 <script>
 function newModal(title, body, footer, size){
     var size = size || 'lg';
@@ -188,4 +188,5 @@ $('#schedule').click(function(){
     return false;
 })
 </script>
+{% endif %}
 {% endblock javascripts %}

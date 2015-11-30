@@ -70,6 +70,7 @@
             {% endif %}
         </dd>
     </dl>
+    {% if user.can_schedule %}
     <dl>
         <dt data-link="nav-schedules">
             <i class="material-icons">alarm</i> Schedules
@@ -78,6 +79,7 @@
             <a class="{% if 'schedules_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'schedules_index' %}">My schedules</a>
         </dd>
     </dl>
+    {% endif %}
     <dl>
         <dt data-link="nav-account">
             <i class="material-icons">face</i> Account
