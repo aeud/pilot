@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from apps.accounts.models import Account, User
 import hashlib
 
@@ -110,3 +111,6 @@ class Visualization(models.Model):
                     cache_until=self.cache_until.isoformat() if self.cache_until else None,
                     query=self.query.to_dict(),
                     graph=self.graph.to_dict(),)
+
+    def absolute_url(self, request):
+        return request.build_absolute_uri(reverse('visualizations_show', kwargs=dict(visualization_id=self.id)))

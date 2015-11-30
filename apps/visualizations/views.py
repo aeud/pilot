@@ -3,6 +3,8 @@ from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.db.models import Count
+from django.core.mail import EmailMultiAlternatives
+from django.template import loader
 from apps.visualizations.models import Query, Visualization, Graph
 from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard, DashboardEntity
@@ -12,6 +14,7 @@ from oauth2client.client import OAuth2Credentials as Credentials
 from apiclient.errors import HttpError
 from oauth2client import client
 from apiclient.discovery import build
+from premailer import transform
 
 def index(request):
     visualizations = Visualization.objects.filter(account=request.user.account, is_active=True).annotate(dashboards_count=Count('dashboardentity__id')).order_by('name')
@@ -269,5 +272,32 @@ def quick_add_to_dashboard(request, visualization_id, dashboard_id):
         entity = DashboardEntity(dashboard=dashboard, visualization=visualization, position=next_value, size='col-md-6 col-lg-6')
         entity.save()
     return redirect('dashboards_visualizations_edit', dashboard_id=dashboard.id, dashboard_entity_id=entity.id)
-    
+
+def email(request, visualization_id):
+    visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    err = None
+    try:
+        job = Job.objects.filter(completed_at__isnull=False, query__visualization=visualization, cached_until__gte=timezone.now()).order_by('-start_at')[:1].get()
+        if job.query_checksum != job.query.checksum:
+            err, job = execute_query(request, visualization)
+    except Job.DoesNotExist:
+        err, job = execute_query(request, visualization)
+    if err:
+        return HttpResponse(err, 'application/json', status=404)
+    subject = 'Colors: Your report ' + visualization.name + ' is ready. [' + timezone.now().isoformat() + ']'
+    user = request.user
+    rows, schema = job.get_rows()
+    num_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['FLOAT', 'INTEGER']]
+    body = transform(loader.render_to_string('emails/visualization.html', dict(user=request.user,
+                                                                               visualization=visualization,
+                                                                               job=job,
+                                                                               rows=rows,
+                                                                               absolute_url=visualization.absolute_url(request),
+                                                                               schema=schema,
+                                                                               num_indexes=num_indexes)))
+    email_message = EmailMultiAlternatives(subject, body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [user.email], reply_to=['colors@luxola.com'])
+    html_email = body
+    email_message.attach_alternative(html_email, 'text/html')
+    #email_message.send()
+    return HttpResponse(html_email)
 

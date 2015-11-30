@@ -67,6 +67,32 @@ class Job(models.Model):
         export = JobExport(job=self, key='toto', url='http://adrien.eudes.co/')
         return export
 
+    def get_dict(self):
+        account = Account.objects.get(visualization__query=self.query)
+        conn = S3Connection(aws_access_key_id=account.aws_access_key_id, aws_secret_access_key=account.aws_secret_access_key)
+        bucket = conn.get_bucket('lx-pilot')
+        key = Key(bucket)
+        key.key = self.results_key()
+        s1 = key.get_contents_as_string()
+        s2 = gzip.decompress(s1)
+        d = json.loads(s2.decode('utf-8'))
+        return d
+
+    def get_rows(self):
+        d = self.get_dict()
+        def process_val(value):
+            if type(value) is dict:
+                if 'v' in value:
+                    return value.get('v')
+                elif 'label' in value:
+                    return value.get('label')
+            return value
+        def process_row(row):
+            return [process_val(val) for val in row]
+        rows = [process_row(row) for row in d.get('rows', [])]
+        schema = d.get('schema')
+        return [rows, schema]
+
 class JobExport(models.Model):
     job        = models.OneToOneField(Job)
     created_at = models.DateTimeField(auto_now_add=True)
