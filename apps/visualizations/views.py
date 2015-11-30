@@ -5,9 +5,11 @@ from django.core.urlresolvers import reverse
 from django.db.models import Count
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
+from django.views.decorators.csrf import csrf_exempt
 from apps.visualizations.models import Query, Visualization, Graph
 from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard, DashboardEntity
+from apps.schedules.models import Schedule, ScheduleOption
 import json, pandas as pd, httplib2, hashlib, gzip, json, pytz, uuid
 from datetime import datetime, timedelta
 from oauth2client.client import OAuth2Credentials as Credentials
@@ -300,4 +302,18 @@ def email(request, visualization_id):
     email_message.attach_alternative(html_email, 'text/html')
     #email_message.send()
     return HttpResponse(html_email)
+
+@csrf_exempt
+def schedule(request, visualization_id):
+    visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    schedule = Schedule(created_by=request.user,
+                        visualization=visualization,
+                        email=request.POST.get('email', request.user.email),
+                        frequency=request.POST.get('frequency', 'daily'),
+                        time=request.POST.get('time', 'morning'),)
+    schedule.save()
+    for option in dict(request.POST).get('options[]', []):
+        schedule_option = ScheduleOption(schedule=schedule, option=int(option))
+        schedule_option.save()
+    return HttpResponse(schedule.id, 'application/json')
 

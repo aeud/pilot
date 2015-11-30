@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from . import accounts, visualizations, dashboards, jobs, admin
+from . import accounts, visualizations, dashboards, jobs, admin, schedules
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^visualizations/', include(visualizations)),
     url(r'^jobs/', include(jobs)),
     url(r'^dashboards/', include(dashboards)),
+    url(r'^schedules/', include(schedules)),
     url(r'^admin/', include(admin)),
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^login/password-reset$', password_reset, name='password_reset'),

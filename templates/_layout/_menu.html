@@ -71,6 +71,14 @@
         </dd>
     </dl>
     <dl>
+        <dt data-link="nav-schedules">
+            <i class="material-icons">alarm</i> Schedules
+        </dt>
+        <dd class="{% if 'schedules_' in request.resolver_match.url_name %}active{% endif %} nav-schedules">
+            <a class="{% if 'schedules_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'schedules_index' %}">My schedules</a>
+        </dd>
+    </dl>
+    <dl>
         <dt data-link="nav-account">
             <i class="material-icons">face</i> Account
         </dt>

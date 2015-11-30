@@ -20,6 +20,7 @@ INSTALLED_APPS = (
     'apps.visualizations',
     'apps.jobs',
     'apps.dashboards',
+    'apps.schedules',
 )
 
 MIDDLEWARE_CLASSES = (
