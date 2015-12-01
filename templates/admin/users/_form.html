@@ -10,6 +10,15 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="col-md-2 control-label" for="can_share">Can share</label>
+        <div class="col-md-10">
+            <select name="can_share" id="can_share" class="form-control">
+                <option value="no" {% if not user.can_share %}selected{% endif %}>No</option>
+                <option value="yes" {% if user.can_share %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-md-2 control-label" for="can_schedule">Can schedule</label>
         <div class="col-md-10">
             <select name="can_schedule" id="can_schedule" class="form-control">

@@ -67,6 +67,7 @@ class User(AbstractBaseUser):
     account         = models.ForeignKey(Account, null=True)
     can_invite      = models.BooleanField(default=False)
     can_schedule    = models.BooleanField(default=False)
+    can_share       = models.BooleanField(default=False)
 
     objects = UserManager()
 
