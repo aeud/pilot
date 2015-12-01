@@ -110,6 +110,20 @@ order by i asc;
                                                          starred_dashboards=starred_dashboards,
                                                          accounts=accounts))
 
+def user_edit(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    return render(request, 'admin/users/edit.html', dict(user=user))
+
+def user_update(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.can_schedule = request.POST.get('can_schedule', 'no') == 'yes'
+    user.can_invite = request.POST.get('can_invite', 'no') == 'yes'
+    if user != request.user:
+        user.is_admin = request.POST.get('is_admin', 'no') == 'yes'
+    user.is_staff = request.POST.get('is_staff', 'no') == 'yes'
+    user.save()
+    return redirect(user_show, user_id=user.id)
+
 def user_change_password(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     return render(request, 'admin/users/change-password.html', dict(user=user))

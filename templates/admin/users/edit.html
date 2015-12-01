@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Admin | Edit User{% endblock title %}
+{% block h1 %}{{ user.email }}{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li><a href="{% url 'admin_users' %}">Users</a></li>
+    <li><a href="{% url 'admin_users_show' user.id %}">{{ user.email }}</a></li>
+    <li class="active">Edit</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+<div class="well">
+    <h2>Edit user</h2>
+    {% include "admin/users/_form.html" %}
+</div>
+{% endblock container %}

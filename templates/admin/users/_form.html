@@ -1,0 +1,49 @@
+<form action="{% url 'admin_users_update' user.id %}" method="POST" class="form-horizontal">
+    {% csrf_token %}
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="can_invite">Can invite</label>
+        <div class="col-md-10">
+            <select name="can_invite" id="can_invite" class="form-control">
+                <option value="no" {% if not user.can_invite %}selected{% endif %}>No</option>
+                <option value="yes" {% if user.can_invite %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="can_schedule">Can schedule</label>
+        <div class="col-md-10">
+            <select name="can_schedule" id="can_schedule" class="form-control">
+                <option value="no" {% if not user.can_schedule %}selected{% endif %}>No</option>
+                <option value="yes" {% if user.can_schedule %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="is_staff">Staff</label>
+        <div class="col-md-10">
+            <select name="is_staff" id="is_staff" class="form-control">
+                <option value="no" {% if not user.is_staff %}selected{% endif %}>No</option>
+                <option value="yes" {% if user.is_staff %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+    </div>
+    {% if request.user != user %}
+    <div class="form-group">
+        <label class="col-md-2 control-label" for="is_admin">Admin</label>
+        <div class="col-md-10">
+            <select name="is_admin" id="is_admin" class="form-control">
+                <option value="no" {% if not user.is_admin %}selected{% endif %}>No</option>
+                <option value="yes" {% if user.is_admin %}selected{% endif %}>Yes</option>
+            </select>
+        </div>
+    </div>
+    {% endif %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <center>
+                <a href="{% url 'admin_users_show' user.id %}" class="btn btn-default btn-lg">Back</a>
+                <button type="submit" class="btn btn-primary btn-lg">Save</button>
+            </center>
+        </div>
+    </div>
+</form>
