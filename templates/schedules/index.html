@@ -17,7 +17,7 @@
         {% for schedule in schedules %}
         <div class="list-group-item">
             <div class="row">
-                <div class="col-md-6">{{ schedule.visualization.name }}</div>
+                <div class="col-md-6"><a href="{% url 'visualizations_show' schedule.visualization.id %}">{{ schedule.visualization.name }}</a></div>
                 <div class="col-md-2">{{ schedule.time|title }}</div>
                 <div class="col-md-2">{{ schedule.frequency|title }}</div>
                 <div class="col-md-2"><a href="{% url 'schedules_remove' schedule.id %}" class="pull-right"><i class="material-icons">delete</i></a></div>
