@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 from django.db.models import Max, Count
+from datetime import timedelta
 from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity, DashboardRequest
 from apps.visualizations.models import Visualization, Query, Graph
 from apps.anonymous.models import SharedDashboard
@@ -172,8 +174,9 @@ def d_import_post(request):
 def share(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, id=dashboard_id, account=request.user.account)
     shared_dashboard = SharedDashboard(dashboard=dashboard,
-                                       created_by=request.user,)
+                                       created_by=request.user,
+                                       valid_until=timezone.now() + timedelta(days=10))
     shared_url = shared_dashboard.generate_url(request)
     shared_dashboard.save()
-    return HttpResponse(shared_url, 'application/json')
+    return HttpResponse(json.dumps(dict(url=shared_url, id=shared_dashboard.id)), 'application/json')
 

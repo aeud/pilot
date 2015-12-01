@@ -77,7 +77,7 @@ def share(request, visualization_id):
                                                created_by=request.user,)
     shared_url = shared_visualization.generate_url(request)
     shared_visualization.save()
-    return HttpResponse(shared_url, 'application/json')
+    return HttpResponse(json.dumps(dict(url=shared_url, id=shared_visualization.id)), 'application/json')
 
 def edit(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}All shared links{% endblock title %}
+{% block h1 %}All shared links{% endblock h1 %}
+
+{% block breadcrumbs_nav %}
+<ol class="breadcrumb">
+    <li class="active">Shared links</li>
+</ol>
+{% endblock breadcrumbs_nav %}
+
+{% block container %}
+{% if shared_dashboards|length > 0 %}
+<div class="well">
+    <h2>{{ shared_dashboards|length }} active shared dashboards</h2>
+    <div class="list-group">
+        {% for share in shared_dashboards %}
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-3"><a href="{% url 'dashboards_play' share.dashboard.slug %}">{{ share.dashboard.name }}</a></div>
+                <div class="col-md-3">{{ share.valid_until }}</div>
+                <div class="col-md-4">{{ share.token }}</div>
+                <div class="col-md-2">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn-blank dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'anonymous_remove_dashboard' share.id %}">Remove</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock container %}

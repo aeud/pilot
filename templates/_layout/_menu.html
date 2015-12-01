@@ -78,6 +78,16 @@
             <a class="{% if 'schedules_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'schedules_index' %}">My schedules</a>
         </dd>
     </dl>
+    {% if request.user.can_share %}
+    <dl>
+        <dt data-link="nav-anonymous">
+            <i class="material-icons">link</i> Shared links
+        </dt>
+        <dd class="{% if 'anonymous_' in request.resolver_match.url_name %}active{% endif %} nav-anonymous">
+            <a class="{% if 'anonymous_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'anonymous_index' %}">My links</a>
+        </dd>
+    </dl>
+    {% endif %}
     <dl>
         <dt data-link="nav-account">
             <i class="material-icons">face</i> Account
