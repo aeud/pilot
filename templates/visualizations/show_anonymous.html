@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% load pipeline %}
+
+{% block stylesheets %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/css/selectize.css">
+{% stylesheet 'dashboards_play' %}
+{% endblock stylesheets %}
+
+{% block title %}Visualization • {{ visualization.name }}{% endblock title %}
+
+{% block body %}
+<header style="margin-bottom: 20px;">
+    <h1>{{ visualization.name }}</h1>
+</header>
+<div class="container">
+    <div class="row">
+        {% include "visualizations/_play.html" with size='col-md-12' %}
+    </div>
+    {% if visualization.graph.chart_type != 'Table' %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="well chart dashboard-entity">
+                <h2>Table</h2>
+                <div class="overflow" style="height: 420px;">
+                    <div id="table_div"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock body %}
+
+{% block javascripts %}
+{{ block.super }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/js/standalone/selectize.min.js"></script>
+{% include "dashboards/_play_js.html" %}
+{% endblock javascripts %}

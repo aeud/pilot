@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Max, Count
 from apps.dashboards.models import Dashboard, DashboardRedirection, DashboardEntity, DashboardRequest
 from apps.visualizations.models import Visualization, Query, Graph
+from apps.anonymous.models import SharedDashboard
 import json, uuid
 
 def index(request):
@@ -34,6 +35,19 @@ def play(request, dashboard_slug):
     DashboardRequest(dashboard=dashboard, created_by=request.user).save()
     return render(request, 'dashboards/play.html', dict(dashboard=dashboard,
                                                         dashboard_entities=dashboard_entities))
+
+def play_anonymous(request, dashboard_id, token):
+    shared_dashboard = get_object_or_404(SharedDashboard, dashboard__id=dashboard_id, token=token)
+    dashboard = shared_dashboard.dashboard
+    if request.user.id and dashboard.account == request.user.account:
+        return redirect(play, dashboard_slug=dashboard.slug)
+    if not shared_dashboard.is_active or (shared_dashboard.valid_until and shared_dashboard.valid_until < timezone.now()):
+        return render(request, 'errors/403.html', status=403)
+    dashboard_entities = DashboardEntity.objects.filter(dashboard=dashboard, visualization__is_active=True).order_by('position')
+    DashboardRequest(dashboard=dashboard, created_by=shared_dashboard.created_by).save()
+    return render(request, 'dashboards/play_anonymous.html', dict(anonymous_token=token,
+                                                                  dashboard=dashboard,
+                                                                  dashboard_entities=dashboard_entities,))
 
 def new(request):
     return render(request, 'dashboards/new.html')
@@ -154,4 +168,12 @@ def d_import_post(request):
     d = json.loads(request.POST.get('file')).get('dashboard')
     dashboard = Dashboard.new_from_dict(request, d)
     return redirect(play, dashboard_slug=dashboard.slug)
+
+def share(request, dashboard_id):
+    dashboard = get_object_or_404(Dashboard, id=dashboard_id, account=request.user.account)
+    shared_dashboard = SharedDashboard(dashboard=dashboard,
+                                       created_by=request.user,)
+    shared_url = shared_dashboard.generate_url(request)
+    shared_dashboard.save()
+    return HttpResponse(shared_url, 'application/json')
 

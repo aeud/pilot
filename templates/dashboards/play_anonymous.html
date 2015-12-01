@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load pipeline %}
+
+{% block stylesheets %}
+{{ block.super }}
+{% stylesheet 'dashboards_play' %}
+{% endblock stylesheets %}
+
+{% block title %}Dashboard {{ dashboard.name }}{% endblock title %}
+
+{% block body %}
+<header style="margin-bottom: 20px;">
+    <h1>{{ dashboard.name }}</h1>
+</header>
+<div class="container-fluid">
+    {% include "dashboards/_play_row.html" %}
+</div>
+{% endblock body %}
+
+{% block javascripts %}
+{{ block.super }}
+{% include "dashboards/_play_js.html" %}
+{% endblock javascripts %}

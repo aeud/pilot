@@ -21,6 +21,7 @@ INSTALLED_APPS = (
     'apps.jobs',
     'apps.dashboards',
     'apps.schedules',
+    'apps.anonymous',
 )
 
 MIDDLEWARE_CLASSES = (

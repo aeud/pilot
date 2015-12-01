@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.core.mail import EmailMultiAlternatives
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
@@ -10,6 +10,7 @@ from apps.visualizations.models import Query, Visualization, Graph
 from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard, DashboardEntity
 from apps.schedules.models import Schedule, ScheduleOption
+from apps.anonymous.models import SharedVisualization, SharedDashboard
 import json, pandas as pd, httplib2, hashlib, gzip, json, pytz, uuid
 from datetime import datetime, timedelta
 from oauth2client.client import OAuth2Credentials as Credentials
@@ -53,6 +54,30 @@ def show(request, visualization_id):
     return render(request, 'visualizations/show.html', dict(visualization=visualization,
                                                             relative_dashboards=relative_dashboards,
                                                             all_dashboards=all_dashboards))
+
+def show_anonymous(request, visualization_id, token):
+    visualization = get_object_or_404(Visualization, Q(pk=visualization_id), Q(sharedvisualization__token=token) | Q(dashboardentity__dashboard__shareddashboard__token=token))
+    try:
+        shared_entity = SharedVisualization.objects.get(visualization__id=visualization_id, token=token)
+    except SharedVisualization.DoesNotExist:
+        try:
+            shared_entity = SharedDashboard.objects.get(dashboard__dashboardentity__visualization__id=visualization_id, token=token)
+        except SharedDashboard.DoesNotExist:
+            return render(request, 'errors/403.html', status=403)
+    if request.user.id and visualization.account == request.user.account:
+        return redirect(show, visualization_id=visualization.id)
+    if not shared_entity.is_active or (shared_entity.valid_until and shared_entity.valid_until < timezone.now()):
+        return render(request, 'errors/403.html', status=403)
+    return render(request, 'visualizations/show_anonymous.html', dict(anonymous_token=token,
+                                                                      visualization=visualization,))
+
+def share(request, visualization_id):
+    visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
+    shared_visualization = SharedVisualization(visualization=visualization,
+                                               created_by=request.user,)
+    shared_url = shared_visualization.generate_url(request)
+    shared_visualization.save()
+    return HttpResponse(shared_url, 'application/json')
 
 def edit(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
@@ -229,6 +254,32 @@ def execute(request, visualization_id):
         job_request.dashboard = dashboard
     job_request.save()
     return HttpResponse(json.dumps(dict(url=job.cache_url, export_url=request.build_absolute_uri(reverse('jobs_export', kwargs=dict(job_id=job.id))))), 'application/json')
+
+def execute_anonymous(request, visualization_id, token):
+    visualization = get_object_or_404(Visualization, Q(pk=visualization_id), Q(sharedvisualization__token=token) | Q(dashboardentity__dashboard__shareddashboard__token=token))
+    try:
+        shared_entity = SharedVisualization.objects.get(visualization__id=visualization_id, token=token)
+    except SharedVisualization.DoesNotExist:
+        try:
+            shared_entity = SharedDashboard.objects.get(dashboard__dashboardentity__visualization__id=visualization_id, token=token)
+        except SharedDashboard.DoesNotExist:
+            return render(request, 'errors/403.html', status=403)
+    err = None
+    try:
+        job = Job.objects.filter(completed_at__isnull=False, query__visualization=visualization, cached_until__gte=timezone.now()).order_by('-start_at')[:1].get()
+        if job.query_checksum != job.query.checksum:
+            err, job = execute_query(shared_entity.created_by, visualization)
+    except Job.DoesNotExist:
+        err, job = execute_query(shared_entity.created_by, visualization)
+    if err:
+        return HttpResponse(err, 'application/json', status=404)
+    job_request = JobRequest(created_by=shared_entity.created_by, job=job)
+#    if request.GET.get('dashboard'):
+#        dashboard = get_object_or_404(Dashboard, pk=request.GET.get('dashboard'), account=request.user.account)
+#        job_request.dashboard = dashboard
+    job_request.save()
+    return HttpResponse(json.dumps(dict(url=job.cache_url, export_url=request.build_absolute_uri(reverse('jobs_export', kwargs=dict(job_id=job.id))))), 'application/json')
+
 
 def remove(request, visualization_id):
     visualization = get_object_or_404(Visualization, pk=visualization_id, account=request.user.account)
