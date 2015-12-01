@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from apps.schedules.models import Schedule
+from apps.schedules.models import Schedule, ScheduleOption
 
 def index(request):
     schedules = Schedule.objects.filter(created_by=request.user, is_active=True)

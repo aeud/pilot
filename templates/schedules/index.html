@@ -18,9 +18,9 @@
         <div class="list-group-item">
             <div class="row">
                 <div class="col-md-6">{{ schedule.visualization.name }}</div>
-                <div class="col-md-2">{{ schedule.time }}</div>
-                <div class="col-md-2">{{ schedule.frequency }}</div>
-                <div class="col-md-2"><a href="{% url 'schedules_remove' schedule.id %}">remove</a></div>
+                <div class="col-md-2">{{ schedule.time|title }}</div>
+                <div class="col-md-2">{{ schedule.frequency|title }}</div>
+                <div class="col-md-2"><a href="{% url 'schedules_remove' schedule.id %}" class="pull-right"><i class="material-icons">delete</i></a></div>
             </div>
         </div>
         {% endfor %}
