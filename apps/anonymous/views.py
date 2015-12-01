@@ -7,7 +7,11 @@ from datetime import timedelta
 
 def index(request):
     shared_dashboards = SharedDashboard.objects.filter(is_active=True, created_by=request.user)
+    for s in shared_dashboards:
+        s.url = s.generate_url(request)
     shared_visualizations = SharedVisualization.objects.filter(is_active=True, created_by=request.user)
+    for s in shared_visualizations:
+        s.url = s.generate_url(request)
     return render(request, 'anonymous/index.html', dict(shared_dashboards=shared_dashboards,
                                                         shared_visualizations=shared_visualizations,))
 
