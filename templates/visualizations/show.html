@@ -181,7 +181,7 @@ $('#schedule').click(function(){
                 modal.modal('hide');
                 var alert = $('<div>').addClass('alert alert-danger toast').attr('role', 'alert').html('Auto emails have been scheduled');
                 setTimeout(function(){ alert.remove(); }, 5000);
-                $('body').append(alert);
+                $('body').append(alert.fadeIn());
             },
             error: function(err) {
                 console.log(err);

@@ -10,7 +10,6 @@ from django.template import loader
 from django.conf import settings
 from django.db import connection
 from django.db.models import Q
-
 from premailer import transform
 
 def run(*args):
@@ -45,7 +44,6 @@ where
         except Job.DoesNotExist:
             err, job = execute_query(schedule.created_by, visualization)
         if not err:
-            subject = 'Colors: Your report ' + visualization.name + ' is ready. [' + timezone.now().isoformat() + ']'
             rows, schema = job.get_rows()
             num_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['FLOAT', 'INTEGER']]
             body = transform(loader.render_to_string('emails/visualization.html', dict(visualization=visualization,
@@ -54,7 +52,7 @@ where
                                                                                        absolute_url=settings.MAIN_HOST + reverse('visualizations_show', kwargs=dict(visualization_id=visualization.id)),
                                                                                        schema=schema,
                                                                                        num_indexes=num_indexes)))
-            email_message = EmailMultiAlternatives(subject, body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'])
+            email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'])
             html_email = body
             email_message.attach_alternative(html_email, 'text/html')
             email_message.send()

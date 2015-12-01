@@ -17,10 +17,24 @@
         {% for schedule in schedules %}
         <div class="list-group-item">
             <div class="row">
-                <div class="col-md-6"><a href="{% url 'visualizations_show' schedule.visualization.id %}">{{ schedule.visualization.name }}</a></div>
-                <div class="col-md-2">{{ schedule.time|title }}</div>
-                <div class="col-md-2">{{ schedule.frequency|title }}</div>
-                <div class="col-md-2"><a href="{% url 'schedules_remove' schedule.id %}" class="pull-right"><i class="material-icons">delete</i></a></div>
+                <div class="col-md-4"><a href="{% url 'visualizations_show' schedule.visualization.id %}">{{ schedule.visualization.name }}</a></div>
+                <div class="col-md-4">{{ schedule.email }}</div>
+                <div class="col-md-2">{{ schedule.frequency|title }}/{{ schedule.time|title }}</div>
+                <div class="col-md-2">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn-blank dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% if schedule.email != request.user.email %}
+                            <li><a href="{% url 'schedules_send_all' schedule.id %}" class="send-schedule">Send to the configured email</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'schedules_send_one' schedule.id %}" class="send-schedule">Receive to your email</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'schedules_remove' schedule.id %}">Remove</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -34,10 +48,19 @@
         {% for schedule in concerned_schedules %}
         <div class="list-group-item">
             <div class="row">
-                <div class="col-md-6"><a href="{% url 'visualizations_show' schedule.visualization.id %}">{{ schedule.visualization.name }}</a></div>
-                <div class="col-md-2">{{ schedule.time|title }}</div>
-                <div class="col-md-2">{{ schedule.frequency|title }}</div>
-                <div class="col-md-2">{{ schedule.created_by.email }}</div>
+                <div class="col-md-4"><a href="{% url 'visualizations_show' schedule.visualization.id %}">{{ schedule.visualization.name }}</a></div>
+                <div class="col-md-4">{{ schedule.email }}</div>
+                <div class="col-md-2">{{ schedule.frequency|title }}/{{ schedule.time|title }}</div>
+                <div class="col-md-2">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn-blank dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'schedules_send_one' schedule.id %}" class="send-schedule">Receive to your email</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         {% endfor %}
@@ -48,3 +71,30 @@
 <center>No schedules for the moment</center>
 {% endif %}
 {% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script>
+$('.send-schedule').click(function(){
+    var alert = $('<div>').addClass('alert alert-danger toast').attr('role', 'alert').html('Sending email ...');
+    $('body').append(alert.fadeIn());
+    $.ajax({
+        url: $(this).attr('href'),
+        success: function(data){
+            alert.html('Email successfully sent');
+            setTimeout(function(){ alert.remove(); }, 5000);
+        },
+        error: function(err){
+            if (err.status != 200) {
+                alert.html('An error happened');
+                setTimeout(function(){ alert.remove(); }, 5000);
+            } else {
+                alert.html('Email successfully sent');
+                setTimeout(function(){ alert.remove(); }, 5000);
+            }
+        }
+    });
+    return false;
+});
+</script>
+{% endblock javascripts %}
