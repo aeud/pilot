@@ -17,7 +17,7 @@ class CustomAuthMiddleware(object):
         self.SessionStore = engine.SessionStore
 
     def process_request(self, request):
-        #return render(request, 'errors/bigquery.html', status=404)
+        return render(request, 'errors/bigquery.html', status=404)
         if re.search('login|logout|robots\.txt|test|([a-f0-9]{8}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{4}\-[a-f0-9]{12}$)', request.path_info):
             return None
         if request.user.id:
