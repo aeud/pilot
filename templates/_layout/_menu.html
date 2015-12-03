@@ -25,7 +25,7 @@
         <dt data-link="nav-mydashboards">
             <i class="material-icons">grade</i> Stars
         </dt>
-        <dd class="{% if 'dashboards_play' == request.resolver_match.url_name and dashboard in request.stars.all %}active{% endif %} nav-mydashboards">
+        <dd class="nav-mydashboards">
             {% for star in request.stars %}
             <a class="{% if 'dashboards_play' == request.resolver_match.url_name and dashboard = star %}selected{% endif %}" href="{% url 'dashboards_play' star.slug %}">{{ star.name }}</a>
             {% endfor %}
