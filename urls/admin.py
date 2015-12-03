@@ -21,4 +21,8 @@ urlpatterns = [
     url(r'^users/(?P<user_id>\d+)/send-invitation$', 'apps.admin.views.user_send_invitation', name='admin_user_send_invitation'),
     url(r'^users/(?P<user_id>\d+)/edit$', 'apps.admin.views.user_edit', name='admin_users_edit'),
     url(r'^users/(?P<user_id>\d+)/update$', 'apps.admin.views.user_update', name='admin_users_update'),
+    url(r'^shared-links/$', 'apps.admin.views.shared_links', name='admin_shared_links'),
+    url(r'^shared-links/d/(?P<shared_dashboard_id>\d+)/remove$', 'apps.admin.views.shared_dashboard_remove', name='admin_shared_dashboard_remove'),
+    url(r'^schedules/$', 'apps.admin.views.schedules', name='admin_schedules'),
+    url(r'^schedules/d/(?P<schedule_id>\d+)/remove$', 'apps.admin.views.schedule_remove', name='admin_schedule_remove'),
 ]

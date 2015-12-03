@@ -110,6 +110,8 @@
             <a class="{% if 'admin_index' == request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_index' %}">Index</a>
             <a class="{% if 'admin_users' in request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_users' %}">Users</a>
             <a class="{% if 'admin_last_jobs' in request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_last_jobs' %}">Last jobs</a>
+            <a class="{% if 'admin_shared_links' in request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_shared_links' %}">Shared links</a>
+            <a class="{% if 'admin_schedules' in request.resolver_match.url_name %}selected{% endif %}" href="{% url 'admin_schedules' %}">Schedules</a>
         </dd>
     </dl>
     {% endif %}

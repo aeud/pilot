@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Shared links{% endblock title %}
+{% block h1 %}Shared links{% endblock h1 %}
+
+{% block container %}
+<div class="well">
+    <h2>{{ shared_dashboards|length }} shared links</h2>
+    <div class="overflow-x">
+        <table class="table" id="sharedDashboards">
+            <thead>
+                <tr>
+                    <th>Dashboard</th>
+                    <th>Valid until</th>
+                    <th>Token</th>
+                    <th>Created by</th>
+                    <th>Created at</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shared_dashboard in shared_dashboards %}
+                <tr id="sharedDashboard-{{ shared_dashboard.id }}">
+                    <td><a href="{% url 'dashboards_play' shared_dashboard.dashboard.slug %}">{{ shared_dashboard.dashboard.name }}</a></td>
+                    <td>{{ shared_dashboard.valid_until }}</td>
+                    <td>{{ shared_dashboard.token }}</td>
+                    <td>{{ shared_dashboard.created_by.email }}</td>
+                    <td>{{ shared_dashboard.created_at }}</td>
+                    <td><a href="{% url 'admin_shared_dashboard_remove' shared_dashboard.id %}" class="remove">delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script>
+$('#sharedDashboards .remove').click(function(){
+    $.ajax({
+        url: $(this).attr('href'),
+        success: function(id){
+            $('#sharedDashboard-' + id).slideUp();
+        }
+    });
+    return false;
+});
+</script>
+{% endblock javascripts %}

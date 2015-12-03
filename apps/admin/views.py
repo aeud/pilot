@@ -7,6 +7,8 @@ from django.http import Http404, HttpResponse
 from apps.jobs.models import Job, JobRequest
 from apps.dashboards.models import Dashboard
 from apps.accounts.models import User, Account
+from apps.schedules.models import Schedule
+from apps.anonymous.models import SharedDashboard, SharedVisualization
 from premailer import transform
 
 def index(request):
@@ -211,3 +213,27 @@ def last_jobs(request):
     last_job_requests = JobRequest.objects.values('id', 'created_by__email', 'created_at', 'job__query__visualization__name').all().order_by('-created_at')[:20]
     return render(request, 'admin/last-jobs.html', dict(last_jobs=last_jobs,
                                                         last_job_requests=last_job_requests,))
+
+def schedules(request):
+    schedules = Schedule.objects.filter(is_active=True).order_by('visualization__name')
+    return render(request, 'admin/schedules.html', dict(schedules=schedules))
+
+def schedule_remove(request, schedule_id):
+    schedule = get_object_or_404(Schedule, pk=schedule_id)
+    schedule.is_active = False
+    schedule.save()
+    return HttpResponse(schedule.id, 'application.json')
+
+def shared_links(request):
+    shared_dashboards = SharedDashboard.objects.filter(is_active=True)
+    return render(request, 'admin/shared_links.html', dict(shared_dashboards=shared_dashboards))
+
+def shared_dashboard_remove(request, shared_dashboard_id):
+    shared_dashboard = get_object_or_404(SharedDashboard, pk=shared_dashboard_id)
+    shared_dashboard.is_active = False
+    shared_dashboard.save()
+    return HttpResponse(shared_dashboard.id, 'application.json')
+
+
+
+    

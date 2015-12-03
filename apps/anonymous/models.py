@@ -6,6 +6,7 @@ from apps.accounts.models import User
 import uuid
 
 class SharedVisualization(models.Model):
+    created_at     = models.DateTimeField(auto_now_add=True)
     is_active      = models.BooleanField(default=True)
     visualization  = models.ForeignKey(Visualization)
     created_by     = models.ForeignKey(User, null=True)
@@ -17,6 +18,7 @@ class SharedVisualization(models.Model):
         return request.build_absolute_uri(reverse('visualizations_show_anonymous', kwargs=dict(visualization_id=self.visualization.id, token=str(self.token))))
 
 class SharedDashboard(models.Model):
+    created_at     = models.DateTimeField(auto_now_add=True)
     is_active      = models.BooleanField(default=True)
     dashboard      = models.ForeignKey(Dashboard)
     created_by     = models.ForeignKey(User, null=True)

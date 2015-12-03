@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Schedules{% endblock title %}
+{% block h1 %}Schedules{% endblock h1 %}
+
+{% block container %}
+<div class="well">
+    <h2>{{ schedules|length }} schedules</h2>
+    <div class="overflow-x">
+        <table class="table" id="schedules">
+            <thead>
+                <tr>
+                    <th>Visualization</th>
+                    <th>Email</th>
+                    <th>Time</th>
+                    <th>Created by</th>
+                    <th>Created at</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for schedule in schedules %}
+                <tr id="schedule-{{ schedule.id }}">
+                    <td><a href="{% url 'visualizations_show' schedule.visualization.id %}">{{ schedule.visualization.name }}</a></td>
+                    <td>{{ schedule.email }}</td>
+                    <td>{{ schedule.frequency|title }}/{{ schedule.time|title }}</td>
+                    <td>{{ schedule.created_by.email }}</td>
+                    <td>{{ schedule.created_at }}</td>
+                    <td><a href="{% url 'admin_schedule_remove' schedule.id %}" class="remove">delete</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock container %}
+
+{% block javascripts %}
+{{ block.super }}
+<script>
+$('#schedules .remove').click(function(){
+    $.ajax({
+        url: $(this).attr('href'),
+        success: function(id){
+            $('#schedule-' + id).slideUp();
+        }
+    });
+    return false;
+});
+</script>
+{% endblock javascripts %}
