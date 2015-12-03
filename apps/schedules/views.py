@@ -48,7 +48,7 @@ def send_all(request, schedule_id):
     schedule = get_object_or_404(Schedule, created_by=request.user, is_active=True, pk=schedule_id)
     visualization = schedule.visualization
     body = prepare_email(schedule)
-    email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'])
+    email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'], bcc=['adrien.eudes.sf@gmail.com'])
     html_email = body
     email_message.attach_alternative(html_email, 'text/html')
     email_message.send()
@@ -58,7 +58,7 @@ def send_one(request, schedule_id):
     schedule = get_object_or_404(Schedule, is_active=True, pk=schedule_id, visualization__account=request.user.account)
     visualization = schedule.visualization
     body = prepare_email(schedule)
-    email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [request.user.email], reply_to=['colors@luxola.com'])
+    email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [request.user.email], reply_to=['colors@luxola.com'], bcc=['adrien.eudes.sf@gmail.com'])
     html_email = body
     email_message.attach_alternative(html_email, 'text/html')
     email_message.send()

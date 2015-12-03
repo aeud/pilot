@@ -52,7 +52,7 @@ where
                                                                                        absolute_url=settings.MAIN_HOST + reverse('visualizations_show', kwargs=dict(visualization_id=visualization.id)),
                                                                                        schema=schema,
                                                                                        num_indexes=num_indexes)))
-            email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'])
+            email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'], bcc=['adrien.eudes.sf@gmail.com'])
             html_email = body
             email_message.attach_alternative(html_email, 'text/html')
             email_message.send()
