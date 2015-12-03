@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load pipeline %}
+
+{% block title %}Bummer!{% endblock title %}
+{% block h1 %}Oops, the application went wrong{% endblock h1 %}
+
+{% block stylesheets %}
+{{ block.super }}
+{% stylesheet 'error' %}
+{% endblock stylesheets %}
+
+{% block container %}
+<div class="error">
+    <div class="error-icon">
+        <i class="fa fa-google"></i>
+    </div>
+    <div class="error-message">
+        <div class="title">Please wait...</div>
+        <div class="help">BigQuery issue</div>
+        <div class="help2">Waiting for Big G to fix BigQuery</div>
+    </div>
+</div>
+{% endblock container %}
