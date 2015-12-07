@@ -1,0 +1,1 @@
+./letsencrypt-auto certonly --webroot --email adrien.eudes@gmail.com -w /home/ubuntu/letsencrypt-web -d colors.luxola.com
