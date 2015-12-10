@@ -136,7 +136,13 @@ $('#schedule').click(function(){
 
     var l2 = $('<label>').attr('class', 'col-sm-2 control-label').html('Time');
     var s2 = $('<select>').attr('class', 'form-control').attr('name', 'time');
-    [['coffee', 'Morning (8am)'], ['morning', 'Morning (10am)'], ['afternoon', 'Afternooon (2pm)'], ['evening', 'Evening (6pm)']].forEach(function(val){
+    [
+        ['coffee', 'Morning (8am)'],
+        ['morning', 'Morning (10am)'],
+        ['afternoon', 'Afternooon (2pm)'],
+        ['evening', 'Evening (6pm)'],
+        {% if request.user.is_admin %}['tester', 'Tester'],{% endif %}
+    ].forEach(function(val){
         s2.append($('<option>').attr('value', val[0]).html(val[1]));
     });
     var i2 = $('<div>').attr('class', 'col-sm-10').append(s2);
