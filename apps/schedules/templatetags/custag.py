@@ -9,9 +9,9 @@ register = template.Library()
 def auto_td(val):
     if re.search('^\-?\d+(,\d{3})*(\.\d+)?\%$', str(val)):
         if re.search('^\-', str(val)):
-            html = '<span class="' + 'positive pourcent' + '">' + str(val) + '</span>'
-        else:
             html = '<span class="' + 'negative pourcent' + '">' + str(val) + '</span>'
+        else:
+            html = '<span class="' + 'positive pourcent' + '">' + str(val) + '</span>'
     else:
         html = val
     return mark_safe(html)
