@@ -10,6 +10,7 @@ from apps.visualizations.models import Visualization
 from apps.jobs.models import Job
 from apps.visualizations.views import execute_query
 from premailer import transform
+from functools import reduce
 
 
 def index(request):
@@ -35,13 +36,20 @@ def prepare_email(schedule):
         err, job = execute_query(schedule.created_by, visualization)
     if not err:
         rows, schema = job.get_rows()
+        header = rows.pop(0)
         num_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['FLOAT', 'INTEGER']]
+        totals = None
+        if schedule.show_sum:
+            totals = [reduce(lambda x,y: x + y, list(map(lambda x: x[i], rows)), 0) if v.get('type') in ['FLOAT', 'INTEGER'] else None for i, v in enumerate(schema)]
         body = transform(loader.render_to_string('emails/visualization.html', dict(visualization=visualization,
                                                                                    job=job,
                                                                                    rows=rows,
                                                                                    absolute_url=settings.MAIN_HOST + reverse('visualizations_show', kwargs=dict(visualization_id=visualization.id)),
                                                                                    schema=schema,
-                                                                                   num_indexes=num_indexes)))
+                                                                                   num_indexes=num_indexes,
+                                                                                   header=header,
+                                                                                   schedule=schedule,
+                                                                                   totals=totals,)))
     return body
 
 def send_all(request, schedule_id):

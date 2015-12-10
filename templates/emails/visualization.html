@@ -45,17 +45,15 @@
                         <h3 align="left">{{ visualization.name }}</h3>
                         <p class="lead" align="left">{{ visualization.description }}</p>
                         <table class="rows" border="1">
-                            {% for row in rows %}
-                            {% if forloop.first %}
                             <thead>
                                 <tr>
-                                    {% for val in row %}
+                                    {% for val in header %}
                                     <th>{{ val }}</th>
                                     {% endfor %}
                                 </tr>
                             </thead>
                             <tbody>
-                            {% else %}
+                                {% for row in rows %}
                                 <tr>
                                     {% for val in row %}
                                     {% if forloop.first %}
@@ -73,9 +71,21 @@
                                     {% endif %}
                                     {% endfor %}
                                 </tr>
-                            {% endif %}
-                            {% endfor %}
+                                {% endfor %}
                             </tbody>
+                            {% if totals %}
+                            <tfoot>
+                                <tr>
+                                    {% for t in totals %}
+                                    {% if forloop.first %}
+                                    <th>Totals</th>
+                                    {% else %}
+                                    <th class="th-right">{{ t|floatformat:2|default:'' }}</th>
+                                    {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            </tfoot>
+                            {% endif %}
                         </table>
                         <p class="callout">
                             This is a report email from <a href="{{ absolute_url }}">Colors</a>.<br/>
@@ -302,6 +312,9 @@ table.rows thead th {
 }
 table.rows tbody th {
     text-align: left;
+}
+table.rows tfoot th.th-right {
+    text-align: right;
 }
 table.rows td {
     text-align: right;

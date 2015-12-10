@@ -340,6 +340,7 @@ def email(request, visualization_id):
     subject = 'Colors: Your report ' + visualization.name + ' is ready. [' + timezone.now().isoformat() + ']'
     user = request.user
     rows, schema = job.get_rows()
+    header = rows.pop(0)
     num_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['FLOAT', 'INTEGER']]
     body = transform(loader.render_to_string('emails/visualization.html', dict(user=request.user,
                                                                                visualization=visualization,
@@ -347,7 +348,8 @@ def email(request, visualization_id):
                                                                                rows=rows,
                                                                                absolute_url=visualization.absolute_url(request),
                                                                                schema=schema,
-                                                                               num_indexes=num_indexes)))
+                                                                               num_indexes=num_indexes,
+                                                                               header=header)))
     email_message = EmailMultiAlternatives(subject, body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [user.email], reply_to=['colors@luxola.com'])
     html_email = body
     email_message.attach_alternative(html_email, 'text/html')
@@ -361,7 +363,8 @@ def schedule(request, visualization_id):
                         visualization=visualization,
                         email=request.POST.get('email', request.user.email),
                         frequency=request.POST.get('frequency', 'daily'),
-                        time=request.POST.get('time', 'morning'),)
+                        time=request.POST.get('time', 'morning'),
+                        show_sum=request.POST.get('totals', 'no') == 'sum',)
     schedule.save()
     for option in dict(request.POST).get('options[]', []):
         schedule_option = ScheduleOption(schedule=schedule, option=int(option))

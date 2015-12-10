@@ -11,9 +11,11 @@ class Schedule(models.Model):
     time           = models.CharField(max_length=255)
     frequency      = models.CharField(max_length=255)
     is_active      = models.BooleanField(default=True)
+    show_sum       = models.BooleanField(default=False)
 
     def generate_subject(self):
         return 'Colors: Your report ' + self.visualization.name + ' is ready. [' + timezone.now().isoformat() + ']'
+
 
 class ScheduleOption(models.Model):
     schedule  = models.ForeignKey(Schedule)
