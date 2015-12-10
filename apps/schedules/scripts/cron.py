@@ -1,4 +1,5 @@
 from apps.schedules.models import Schedule
+from apps.schedules.views import prepare_email
 from apps.visualizations.models import Visualization
 from apps.jobs.models import Job
 from apps.visualizations.views import execute_query
@@ -46,12 +47,7 @@ where
         if not err:
             rows, schema = job.get_rows()
             num_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['FLOAT', 'INTEGER']]
-            body = transform(loader.render_to_string('emails/visualization.html', dict(visualization=visualization,
-                                                                                       job=job,
-                                                                                       rows=rows,
-                                                                                       absolute_url=settings.MAIN_HOST + reverse('visualizations_show', kwargs=dict(visualization_id=visualization.id)),
-                                                                                       schema=schema,
-                                                                                       num_indexes=num_indexes)))
+            body = prepare_email(schedule)
             email_message = EmailMultiAlternatives(schedule.generate_subject(), body, visualization.name + ' <colors+' + str(visualization.id) + '@luxola.com>', [schedule.email], reply_to=['colors@luxola.com'], bcc=['adrien.eudes.sf@gmail.com'])
             html_email = body
             email_message.attach_alternative(html_email, 'text/html')
