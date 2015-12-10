@@ -62,6 +62,8 @@
                                     <td>
                                         {% if visualization.query.unstack %}
                                         {{ val|floatformat:2 }}
+                                        {% elif forloop.counter0 in integer_indexes %}
+                                        {{ val|floatformat:'0' }}
                                         {% elif forloop.counter0 in num_indexes %}
                                         {{ val|floatformat:2 }}
                                         {% else %}
@@ -80,7 +82,17 @@
                                     {% if forloop.first %}
                                     <th>Totals</th>
                                     {% else %}
-                                    <th class="th-right">{{ t|floatformat:2|default:'' }}</th>
+                                    <th class="th-right">
+                                        {% if visualization.query.unstack %}
+                                        {{ t|floatformat:2|default:'' }}
+                                        {% elif forloop.counter0 in integer_indexes %}
+                                        {{ t|floatformat:'0'|default:'' }}
+                                        {% elif forloop.counter0 in num_indexes %}
+                                        {{ t|floatformat:2|default:'' }}
+                                        {% else %}
+                                        {{ t|default:'' }}
+                                        {% endif %}
+                                    </th>
                                     {% endif %}
                                     {% endfor %}
                                 </tr>

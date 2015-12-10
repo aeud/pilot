@@ -38,6 +38,7 @@ def prepare_email(schedule):
         rows, schema = job.get_rows()
         header = rows.pop(0)
         num_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['FLOAT', 'INTEGER']]
+        integer_indexes = [i for i, v in enumerate(schema) if v.get('type') in ['INTEGER']]
         totals = None
         if schedule.show_sum:
             totals = [reduce(lambda x,y: x + y, list(map(lambda x: x[i], rows)), 0) if v.get('type') in ['FLOAT', 'INTEGER'] else None for i, v in enumerate(schema)]
@@ -47,6 +48,7 @@ def prepare_email(schedule):
                                                                                    absolute_url=settings.MAIN_HOST + reverse('visualizations_show', kwargs=dict(visualization_id=visualization.id)),
                                                                                    schema=schema,
                                                                                    num_indexes=num_indexes,
+                                                                                   integer_indexes=integer_indexes,
                                                                                    header=header,
                                                                                    schedule=schedule,
                                                                                    totals=totals,)))
