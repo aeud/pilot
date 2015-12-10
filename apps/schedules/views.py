@@ -14,7 +14,7 @@ from functools import reduce
 
 
 def index(request):
-    schedules = Schedule.objects.filter(created_by=request.user, is_active=True)
+    schedules = Schedule.objects.filter(created_by=request.user, is_active=True).order_by('visualization__name')
     concerned_schedules = Schedule.objects.filter(email=request.user.email, is_active=True).exclude(id__in=[s.id for s in schedules])
     return render(request, 'schedules/index.html', dict(schedules=schedules,
                                                         concerned_schedules=concerned_schedules,))
