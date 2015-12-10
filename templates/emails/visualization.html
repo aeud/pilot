@@ -1,4 +1,4 @@
-{% load staticfiles l10n %}
+{% load staticfiles l10n custag %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -59,15 +59,16 @@
                                     {% if forloop.first %}
                                     <th>{{ val }}</th>
                                     {% else %}
+                                    
                                     <td>
                                         {% if visualization.query.unstack %}
-                                        {{ val|floatformat:2 }}
+                                        {% auto_td val|floatformat:2 %}
                                         {% elif forloop.counter0 in integer_indexes %}
-                                        {{ val|floatformat:'0' }}
+                                        {% auto_td val|floatformat:'0' %}
                                         {% elif forloop.counter0 in num_indexes %}
-                                        {{ val|floatformat:2 }}
+                                        {% auto_td val|floatformat:2 %}
                                         {% else %}
-                                        {{ val }}
+                                        {% auto_td val %}
                                         {% endif %}
                                     </td>
                                     {% endif %}
@@ -342,6 +343,12 @@ p.footer a {
     color: #666;
     text-decoration: none;
     outline: 0;
+}
+.pourcent.positive {
+    color: #009688;
+}
+.pourcent.negative {
+    color: #C2185B;
 }
 </style>
 

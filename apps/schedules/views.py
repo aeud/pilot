@@ -73,3 +73,8 @@ def send_one(request, schedule_id):
     email_message.attach_alternative(html_email, 'text/html')
     email_message.send()
     return HttpResponse(True, 'application/json')
+
+def show(request, schedule_id):
+    schedule = get_object_or_404(Schedule, is_active=True, pk=schedule_id, visualization__account=request.user.account)
+    visualization = schedule.visualization
+    return HttpResponse(prepare_email(schedule))
