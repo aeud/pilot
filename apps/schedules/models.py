@@ -14,7 +14,7 @@ class Schedule(models.Model):
     show_sum       = models.BooleanField(default=False)
 
     def generate_subject(self):
-        return 'Colors: Your report ' + self.visualization.name + ' is ready. [' + timezone.now().isoformat() + ']'
+        return 'Colors: Your report ' + self.visualization.name + ' is ready. [' + timezone.now().strftime('%d/%m/%Y') + ', ' + self.time + ']'
 
 
 class ScheduleOption(models.Model):
