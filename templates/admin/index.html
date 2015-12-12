@@ -89,7 +89,7 @@ google.setOnLoadCallback(function(){
     data.addColumn('number', 'Requests');
     data.addRows([
         {% for row in jobs %}
-        [new Date('{{ row.0|date:'Y-m-d' }}'), {{ row.1 }}, {{ row.2 }}],
+        [new Date('{{ row.0|date:'Y-m-d' }}'), {{ row.1|unlocalize }}, {{ row.2|unlocalize }}],
         {% endfor %}
     ]);
     new google.visualization.ColumnChart(document.getElementById('container_reports')).draw(data, { width: '100%', height: 400 });
@@ -99,7 +99,7 @@ google.setOnLoadCallback(function(){
     data.addColumn('number', 'Requests');
     data.addRows([
         {% for row in jobs %}
-        [new Date('{{ row.0|date:'Y-m-d' }}'), {{ row.3 }}, {{ row.4 }}],
+        [new Date('{{ row.0|date:'Y-m-d' }}'), {{ row.3|unlocalize }}, {{ row.4|unlocalize }}],
         {% endfor %}
     ]);
     new google.visualization.ColumnChart(document.getElementById('container_exports')).draw(data, { width: '100%', height: 400 });
@@ -108,7 +108,7 @@ google.setOnLoadCallback(function(){
     dataVisualizations.addColumn('number', 'New visualizations');
     dataVisualizations.addRows([
         {% for row in visualizations %}
-        [new Date('{{ row.0|date:'Y-m-d' }}'), {{ row.1 }}],
+        [new Date('{{ row.0|date:'Y-m-d' }}'), {{ row.1|unlocalize }}],
         {% endfor %}
     ]);
     new google.visualization.ColumnChart(document.getElementById('container_visualizations')).draw(dataVisualizations, { width: '100%', height: 400 });
