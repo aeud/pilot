@@ -28,7 +28,11 @@ PIPELINE_CSS = {
 
 PIPELINE_JS = {
     'main': {
-        'source_filenames': ('base/resize.js', 'base/main.js',),
+        'source_filenames': ('base/resize.js', 'base/main.js', 'base/modal.js',),
+        'output_filename': 'js/main.js',
+    },
+    'visualizations_show': {
+        'source_filenames': ('visualizations/schedule.js',),
         'output_filename': 'js/main.js',
     },
 }

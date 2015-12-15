@@ -54,6 +54,11 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/3.0.14/autosize.min.js"></script>
+    <script>
+    request = {
+        'email': '{{ request.user.email }}'
+    }
+    </script>
     {% javascript 'main' %}
     {% endblock javascripts %}
 </body>
