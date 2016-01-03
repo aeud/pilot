@@ -4,7 +4,7 @@
 {% block h1 %}My dashboards{% endblock h1 %}
 
 {% block container %}
-<div class="row">
+<div class="row resize">
     {% if best_dashboards|length > 0 %}
     <div class="col-md-6">
         <div class="well">
@@ -31,9 +31,8 @@
                 {% for dashboard in last_dashboards %}
                 <a href="{% url 'dashboards_play' dashboard.slug %}" class="list-group-item">
                     <div class="row">
-                        <div class="col-md-6">{{ dashboard.name }}</div>
-                        <div class="col-md-4">{{ dashboard.last_visited_at }}</div>
-                        <div class="col-md-2">{{ dashboard.entities_count }} charts</div>
+                        <div class="col-sm-6">{{ dashboard.name }}</div>
+                        <div class="col-sm-6">{{ dashboard.last_visited_at }}</div>
                     </div>
                 </a>
                 {% endfor %}

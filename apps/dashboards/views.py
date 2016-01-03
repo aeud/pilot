@@ -17,8 +17,11 @@ def my(request):
     stars = Dashboard.objects.filter(is_active=True, star_users=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True)).order_by('name')
     best_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(is_active=True, dashboardrequest__created_by=request.user).annotate(requests_count=Count('dashboardrequest__id', distinct=True), entities_count=Count('dashboardentity__id', distinct=True), last_visited_at=Max('dashboardrequest__created_at')).order_by('-requests_count')[:5]
     last_dashboards = Dashboard.objects.values('name', 'id', 'slug').filter(is_active=True, dashboardrequest__created_by=request.user).annotate(entities_count=Count('dashboardentity__id', distinct=True), last_visited_at=Max('dashboardrequest__created_at')).order_by('-last_visited_at').distinct()[:5]
-    print(timezone.now().isoformat())
-    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards, stars=stars, best_dashboards=best_dashboards))
+    random_visualization = Visualization.objects.order_by('?').first()
+    return render(request, 'dashboards/stars.html', dict(last_dashboards=last_dashboards,
+                                                         stars=stars,
+                                                         best_dashboards=best_dashboards,
+                                                         random_visualization=random_visualization,))
 
 def show(request, dashboard_id):
     dashboard = get_object_or_404(Dashboard, pk=dashboard_id, account=request.user.account)
