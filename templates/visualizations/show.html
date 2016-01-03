@@ -97,7 +97,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 {% include "dashboards/_play_js.html" %}
-{% if user.can_schedule %}
 {% javascript 'visualizations_show' %}
-{% endif %}
 {% endblock javascripts %}

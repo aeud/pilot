@@ -4,15 +4,59 @@
 {% block h1 %}All schedules{% endblock h1 %}
 
 {% block breadcrumbs_nav %}
+{% if user.can_schedule %}
+<div class="control pull-right">
+    <div class="btn-group">
+        <button type="button" class="btn-control dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="material-icons">more_horiz</i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a href="{% url 'schedules_new' %}" id="schedule">New</a></li>
+        </ul>
+    </div>
+</div>
+{% endif %}
 <ol class="breadcrumb">
     <li class="active">Schedules</li>
 </ol>
 {% endblock breadcrumbs_nav %}
 
 {% block container %}
+{% if globale_schedules|length > 0 %}
+<div class="well">
+    <h2>{{ globale_schedules|length }} globale schedules</h2>
+    <div class="list-group">
+        {% for schedule in globale_schedules %}
+        <div class="list-group-item">
+            <div class="row">
+                <div class="col-md-4">{{ schedule.subject }}</div>
+                <div class="col-md-4">{{ schedule.email }}</div>
+                <div class="col-md-2">{{ schedule.frequency|title }}/{{ schedule.time|title }}</div>
+                <div class="col-md-2">
+                    <div class="btn-group pull-right">
+                        <button type="button" class="btn-blank dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Action <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'schedules_preview' schedule.id %}" target="_blank">Preview</a></li>
+                            {% if schedule.email != request.user.email %}
+                            <li><a href="{% url 'schedules_send_all' schedule.id %}" class="send-schedule">Send to the configured email</a></li>
+                            {% endif %}
+                            <li><a href="{% url 'schedules_send_one' schedule.id %}" class="send-schedule">Receive to your email</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'schedules_globale_remove' schedule.id %}">Remove</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 {% if schedules|length > 0 %}
 <div class="well">
-    <h2>{{ schedules|length }} active schedules</h2>
+    <h2>{{ schedules|length }} visualization schedules</h2>
     <div class="list-group">
         {% for schedule in schedules %}
         <div class="list-group-item">
@@ -43,7 +87,7 @@
 {% endif %}
 {% if concerned_schedules|length > 0 %}
 <div class="well">
-    <h2>{{ concerned_schedules|length }} concerned schedules</h2>
+    <h2>{{ concerned_schedules|length }} concerned visualization schedules</h2>
     <div class="list-group">
         {% for schedule in concerned_schedules %}
         <div class="list-group-item">
@@ -66,9 +110,6 @@
         {% endfor %}
     </div>
 </div>
-{% endif %}
-{% if schedules|length == 0 and concerned_schedules|length == 0 %}
-<center>No schedules for the moment</center>
 {% endif %}
 {% endblock container %}
 

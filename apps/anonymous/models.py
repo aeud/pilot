@@ -28,4 +28,7 @@ class SharedDashboard(models.Model):
 
     def generate_url(self, request):
         return request.build_absolute_uri(reverse('dashboards_play_anonymous', kwargs=dict(dashboard_id=self.dashboard.id, token=str(self.token))))
+
+    def generate_path(self):
+        return reverse('dashboards_play_anonymous', kwargs=dict(dashboard_id=self.dashboard.id, token=str(self.token)))
     

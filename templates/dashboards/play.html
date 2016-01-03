@@ -36,7 +36,7 @@
             {% endif %}
             {% if request.user.can_share %}
             <li role="separator" class="divider"></li>
-            <li><a href="{% url 'dashboards_share' dashboard.id %}" id="shareDashboard">Share</a></li> 
+            <li><a href="{% url 'dashboards_share' dashboard.id %}" id="shareDashboard" data-submit="{% url 'anonymous_update_shared_dashboard' %}">Share</a></li> 
             {% endif %}
         </ul>
     </div>
@@ -71,77 +71,8 @@
 {% block javascripts %}
 {{ block.super }}
 {% include "dashboards/_play_js.html" %}
+{% javascript 'dashboards_play' %}
 <script>
-function newModal(title, body, footer, size){
-    var size = size || 'lg';
-    var modal = $('<div>').attr('class', 'modal fade');
-    var modalDialog = $('<div>').attr('class', 'modal-dialog').addClass('modal-' + size);
-    var modalContent = $('<div>').attr('class', 'modal-content');
-    var modalHeader = $('<div>').attr('class', 'modal-header');
-    var closeButton = $('<button>').attr('class', 'close').attr('aria-label', 'Close').attr('data-dismiss', 'modal').append($('<span>').attr('aria-hidden', 'true').html('&times;'));
-    var modalTitle = $('<h4>').attr('class', 'modal-title').html(title);
-    var modalBody = $('<div>').attr('class', 'modal-body').append(body);
-    modalHeader.append(closeButton);
-    modalHeader.append(modalTitle);
-    modalContent.append(modalHeader);
-    modalContent.append(modalBody);
-    modalDialog.append(modalContent);
-    if (typeof footer != 'undefined' && footer) {
-        var modalFooter = $('<div>').attr('class', 'modal-footer').html(footer);
-        modalContent.append(modalFooter);
-    }
-    modal.append(modalDialog);
-    modal.modal();
-    return modal;
-}
-$('#shareDashboard').click(function(){
-    $.ajax({
-        url: $(this).attr('href'),
-        success: function(data){
-            console.log(data);
-            var l1 = $('<label>').attr('class', 'col-sm-2 control-label').html('URL');
-            var i1 = $('<div>').attr('class', 'col-sm-10').append($('<input>').attr('disabled', 'disabled').attr('class', 'form-control').attr('value', data.url));
-            var r1 = $('<div>').attr('class', 'form-group').append(l1).append(i1);
 
-            var l2 = $('<label>').attr('class', 'col-sm-2 control-label').html('Label');
-            var i2 = $('<div>').attr('class', 'col-sm-10').append($('<input>').attr('name', 'label').attr('class', 'form-control'));
-            var r2 = $('<div>').attr('class', 'form-group').append(l2).append(i2);
-
-            var l3 = $('<label>').attr('class', 'col-sm-2 control-label').html('Valid days');
-            var i3 = $('<div>').attr('class', 'col-sm-10').append($('<input>').attr('type', 'number').attr('name', 'days').attr('class', 'form-control').val(10));
-            var r3 = $('<div>').attr('class', 'form-group').append(l3).append(i3);
-
-            var form = $('<form>').attr('class', 'form-horizontal').append(r1).append(r2).append(r3);
-            form.append($('<input>').attr('type', 'hidden').attr('name', 'id').val(data.id));
-
-            var submitButton = $('<button>').html('Save').attr('class', 'btn btn-primary');
-            var footer = $('<div>').append(submitButton);
-
-            var modal = newModal('Share this dashboard', form, footer);
-
-            submitButton.click(function(){
-                $.ajax({
-                    url: '{% url 'anonymous_update_shared_dashboard' %}',
-                    data: form.serialize(),
-                    type: 'post',
-                    success: function(data){
-                        modal.modal('hide');
-                        var alert = $('<div>').addClass('alert alert-danger toast').attr('role', 'alert').html('Link saved');
-                        setTimeout(function(){ alert.remove(); }, 5000);
-                        $('body').append(alert.fadeIn());
-                    },
-                    error: function(data){
-                        modal.modal('hide');
-                        var alert = $('<div>').addClass('alert alert-danger toast').attr('role', 'alert').html('Link saved');
-                        setTimeout(function(){ alert.remove(); }, 5000);
-                        $('body').append(alert.fadeIn());
-                    }
-                });
-                return false;
-            });
-        }
-    });
-    return false;
-});
 </script>
 {% endblock javascripts %}

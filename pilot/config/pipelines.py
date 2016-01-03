@@ -33,6 +33,10 @@ PIPELINE_JS = {
     },
     'visualizations_show': {
         'source_filenames': ('visualizations/schedule.js',),
-        'output_filename': 'js/main.js',
+        'output_filename': 'js/visualizations_show.js',
+    },
+    'dashboards_play': {
+        'source_filenames': ('dashboards/share.js',),
+        'output_filename': 'js/dashboards_play.js',
     },
 }
